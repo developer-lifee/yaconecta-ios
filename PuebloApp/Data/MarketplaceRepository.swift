@@ -6,6 +6,7 @@ struct MarketplaceSnapshot: Sendable {
     let requests: [LocalRequest]
     let activity: [ActivityItem]
     let news: [CommunityNews]
+    let spots: [TownSpot]
 }
 
 protocol MarketplaceRepository: Sendable {
@@ -143,6 +144,29 @@ enum DemoData {
                 category: .roads, urgency: .urgent, location: "Acceso al puente Navarro",
                 createdAt: .now.addingTimeInterval(-600), sourceNote: "Bomberos voluntarios",
                 verification: .verified, confirmationCount: 12, didConfirm: false
+            )
+        ],
+        spots: [
+            TownSpot(
+                id: UUID(uuidString: "50000000-0000-0000-0000-000000000001")!, townID: guaduas.id,
+                author: "Felipe M.", name: "Mirador de la Piedra Capira",
+                description: "Una de las mejores vistas del valle del Magdalena. Ideal para ver el atardecer y tomar fotos panorámicas increibles.",
+                category: .photo, locationNote: "Camino a la vereda La Capira (20 min en expreso)",
+                photoSymbol: "mountain.2.fill", likesCount: 42, isLiked: false
+            ),
+            TownSpot(
+                id: UUID(uuidString: "50000000-0000-0000-0000-000000000002")!, townID: guaduas.id,
+                author: "Andrea V.", name: "Patio Imperial del Café",
+                description: "Un rincón tranquilo con sombra de árboles centenarios. Sirven café de origen local y granizados deliciosos.",
+                category: .chill, locationNote: "Calle Real, 2 cuadras arriba de la plaza",
+                photoSymbol: "cup.and.saucer.fill", likesCount: 29, isLiked: false
+            ),
+            TownSpot(
+                id: UUID(uuidString: "50000000-0000-0000-0000-000000000003")!, townID: guaduas.id,
+                author: "Don Bernardo", name: "Puente Colonial de la Pola",
+                description: "Lugar lleno de historia patria. Excelente iluminación nocturna para fotos y caminata tranquila.",
+                category: .history, locationNote: "Borde del centro histórico",
+                photoSymbol: "building.columns.fill", likesCount: 37, isLiked: false
             )
         ]
     )

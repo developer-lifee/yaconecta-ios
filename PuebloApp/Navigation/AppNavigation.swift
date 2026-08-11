@@ -13,6 +13,8 @@ enum AppRoute: Hashable {
     case business(Business)
     case request(LocalRequest)
     case news(CommunityNews)
+    case myBusiness
+    case townSpots
 }
 
 enum SheetDestination: Identifiable, Hashable {

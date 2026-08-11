@@ -15,7 +15,9 @@ SourcePackages/
 # Swift Package Manager
 .build/
 
-# CocoaPods / Carthage if ever added
-Pods/
-Carthage/
+# Supabase CLI temp files
+supabase/.temp/
 
+# Secrets — never commit
+.env
+*.env

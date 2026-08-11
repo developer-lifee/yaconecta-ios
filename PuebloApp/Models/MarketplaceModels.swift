@@ -181,6 +181,39 @@ struct NewsDraft: Equatable, Sendable {
     }
 }
 
+// MARK: - Spots del Pueblo (Turismo y Parches Locales)
+
+enum SpotCategory: String, CaseIterable, Identifiable, Hashable, Sendable {
+    case photo = "Fotos / Miradores"
+    case chill = "Chill / Parche"
+    case nature = "Naturaleza / Río"
+    case history = "Historia / Rincón"
+
+    var id: String { rawValue }
+
+    var symbol: String {
+        switch self {
+        case .photo: "camera.fill"
+        case .chill: "cup.and.saucer.fill"
+        case .nature: "leaf.fill"
+        case .history: "building.columns.fill"
+        }
+    }
+}
+
+struct TownSpot: Identifiable, Hashable, Sendable {
+    let id: UUID
+    let townID: UUID
+    let author: String
+    let name: String
+    let description: String
+    let category: SpotCategory
+    let locationNote: String
+    let photoSymbol: String
+    var likesCount: Int
+    var isLiked: Bool
+}
+
 extension Int {
     var colombianCurrency: String {
         formatted(.currency(code: "COP").precision(.fractionLength(0)))

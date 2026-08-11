@@ -19,6 +19,7 @@ final class MarketplaceStore {
     var requests: [LocalRequest] = []
     var activity: [ActivityItem] = []
     var news: [CommunityNews] = []
+    var spots: [TownSpot] = []
     var selectedTownID: Town.ID?
     var selectedCategory: BusinessCategory?
     var searchText = ""
@@ -61,6 +62,11 @@ final class MarketplaceStore {
             }
     }
 
+    var townSpots: [TownSpot] {
+        guard let townID = selectedTown?.id else { return [] }
+        return spots.filter { $0.townID == townID }
+    }
+
     func load() async {
         guard loadState == .idle else { return }
         loadState = .loading
@@ -71,6 +77,7 @@ final class MarketplaceStore {
             requests = snapshot.requests
             activity = snapshot.activity.sorted { $0.date > $1.date }
             news = snapshot.news
+            spots = snapshot.spots
             selectedTownID = selectedTownID ?? towns.first?.id
             loadState = .loaded
         } catch {
@@ -149,5 +156,119 @@ final class MarketplaceStore {
         if news[index].verification == .unverified, news[index].confirmationCount >= 3 {
             news[index].verification = .communityConfirmed
         }
+    }
+
+    // MARK: - Gestor de Comercio y Estantería (Mi Negocio)
+
+    var myBusiness: Business? {
+        get {
+            businesses.first { $0.name.contains("Mi Negocio") || $0.id == myBusinessID }
+        }
+    }
+    private var myBusinessID: UUID?
+
+    func createOrUpdateMyBusiness(
+        name: String,
+        category: BusinessCategory,
+        summary: String,
+        deliveryPrice: Int,
+        etaMinutes: Int,
+        symbol: String,
+        colorName: String
+    ) {
+        guard let townID = selectedTown?.id else { return }
+        let currentProducts = myBusiness?.products ?? []
+        let id = myBusinessID ?? UUID()
+        myBusinessID = id
+
+        let updatedBusiness = Business(
+            id: id,
+            townID: townID,
+            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+            category: category,
+            summary: summary.trimmingCharacters(in: .whitespacesAndNewlines),
+            etaMinutes: etaMinutes,
+            deliveryPrice: deliveryPrice,
+            rating: 5.0,
+            reviewCount: 1,
+            isOpen: true,
+            symbol: symbol,
+            colorName: colorName,
+            products: currentProducts
+        )
+
+        if let index = businesses.firstIndex(where: { $0.id == id }) {
+            businesses[index] = updatedBusiness
+        } else {
+            businesses.insert(updatedBusiness, at: 0)
+        }
+    }
+
+    func addProduct(to businessID: UUID, name: String, detail: String, price: Int) {
+        guard let bIndex = businesses.firstIndex(where: { $0.id == businessID }) else { return }
+        let newProduct = Product(
+            id: UUID(),
+            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+            detail: detail.trimmingCharacters(in: .whitespacesAndNewlines),
+            price: price
+        )
+        var updatedProducts = businesses[bIndex].products
+        updatedProducts.append(newProduct)
+        businesses[bIndex] = rebuildBusiness(businesses[bIndex], products: updatedProducts)
+    }
+
+    func updateProduct(in businessID: UUID, product: Product) {
+        guard let bIndex = businesses.firstIndex(where: { $0.id == businessID }) else { return }
+        var updatedProducts = businesses[bIndex].products
+        if let pIndex = updatedProducts.firstIndex(where: { $0.id == product.id }) {
+            updatedProducts[pIndex] = product
+            businesses[bIndex] = rebuildBusiness(businesses[bIndex], products: updatedProducts)
+        }
+    }
+
+    func deleteProduct(from businessID: UUID, productID: UUID) {
+        guard let bIndex = businesses.firstIndex(where: { $0.id == businessID }) else { return }
+        var updatedProducts = businesses[bIndex].products
+        updatedProducts.removeAll { $0.id == productID }
+        businesses[bIndex] = rebuildBusiness(businesses[bIndex], products: updatedProducts)
+    }
+
+    func bulkImportProducts(to businessID: UUID, products: [Product]) {
+        guard let bIndex = businesses.firstIndex(where: { $0.id == businessID }) else { return }
+        var updatedProducts = businesses[bIndex].products
+        updatedProducts.append(contentsOf: products)
+        businesses[bIndex] = rebuildBusiness(businesses[bIndex], products: updatedProducts)
+    }
+
+    private func rebuildBusiness(_ b: Business, products: [Product]) -> Business {
+        Business(
+            id: b.id, townID: b.townID, name: b.name, category: b.category,
+            summary: b.summary, etaMinutes: b.etaMinutes, deliveryPrice: b.deliveryPrice,
+            rating: b.rating, reviewCount: b.reviewCount, isOpen: b.isOpen,
+            symbol: b.symbol, colorName: b.colorName, products: products
+        )
+    }
+
+    func publishSpot(name: String, description: String, category: SpotCategory, locationNote: String, author: String) {
+        guard let townID = selectedTown?.id else { return }
+        let newSpot = TownSpot(
+            id: UUID(),
+            townID: townID,
+            author: author,
+            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+            description: description.trimmingCharacters(in: .whitespacesAndNewlines),
+            category: category,
+            locationNote: locationNote.trimmingCharacters(in: .whitespacesAndNewlines),
+            photoSymbol: category.symbol,
+            likesCount: 1,
+            isLiked: true
+        )
+        spots.insert(newSpot, at: 0)
+    }
+
+    func toggleSpotLike(id: UUID) {
+        guard let index = spots.firstIndex(where: { $0.id == id }) else { return }
+        spots[index].isLiked.toggle()
+        spots[index].likesCount += spots[index].isLiked ? 1 : -1
     }
 }

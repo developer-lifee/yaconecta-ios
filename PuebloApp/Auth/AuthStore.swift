@@ -147,6 +147,63 @@ final class AuthStore {
         }
     }
 
+    func signInWithEmail(email: String, password: String) async {
+        guard let client else {
+            errorMessage = "Agrega las credenciales de Supabase antes de iniciar sesión."
+            return
+        }
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedEmail.isEmpty, !password.isEmpty else {
+            errorMessage = "Por favor ingresa tu correo y contraseña."
+            return
+        }
+
+        isWorking = true
+        errorMessage = nil
+        defer { isWorking = false }
+
+        do {
+            let session = try await client.auth.signIn(email: trimmedEmail, password: password)
+            state = .signedIn(Self.user(from: session.user))
+        } catch {
+            errorMessage = "Error al iniciar sesión: \(error.localizedDescription)"
+        }
+    }
+
+    func signUpWithEmail(email: String, password: String, displayName: String) async {
+        guard let client else {
+            errorMessage = "Agrega las credenciales de Supabase antes de iniciar sesión."
+            return
+        }
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedEmail.isEmpty, !password.isEmpty else {
+            errorMessage = "Por favor completa el correo y la contraseña."
+            return
+        }
+        guard password.count >= 6 else {
+            errorMessage = "La contraseña debe tener al menos 6 caracteres."
+            return
+        }
+
+        isWorking = true
+        errorMessage = nil
+        defer { isWorking = false }
+
+        do {
+            let response = try await client.auth.signUp(
+                email: trimmedEmail,
+                password: password,
+                data: [
+                    "full_name": .string(trimmedName.isEmpty ? "Vecino" : trimmedName)
+                ]
+            )
+            state = .signedIn(Self.user(from: response.user, fallbackName: trimmedName))
+        } catch {
+            errorMessage = "Error al registrarse: \(error.localizedDescription)"
+        }
+    }
+
     func signOut() async {
         guard let client else { return }
         isWorking = true
