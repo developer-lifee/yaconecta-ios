@@ -52,6 +52,24 @@ struct ProfileView: View {
                     }
                 }
 
+                if sellerRole {
+                    Section("Gestión Comercial") {
+                        Button {
+                            router.navigate(to: .myBusiness)
+                        } label: {
+                            HStack {
+                                Label("Gestionar Mi Negocio y Estantería", systemImage: "building.2.crop.circle.fill")
+                                    .font(.body.bold())
+                                    .foregroundStyle(AppTheme.coral)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.tertiary)
+                            }
+                        }
+                    }
+                }
+
                 Section("Confianza") {
                     Label("Cuenta social verificada", systemImage: "checkmark.seal.fill")
                         .foregroundStyle(AppTheme.moss)

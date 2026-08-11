@@ -61,6 +61,10 @@ private struct AppTabStack<Root: View>: View {
                         RequestDetailView(request: request)
                     case .news(let news):
                         NewsDetailView(newsID: news.id)
+                    case .myBusiness:
+                        MyBusinessView()
+                    case .townSpots:
+                        TownSpotsView()
                     }
                 }
         }

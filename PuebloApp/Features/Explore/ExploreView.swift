@@ -11,6 +11,7 @@ struct ExploreView: View {
                 welcomeBanner
                 categories
                 businessSection
+                townSpotsSection
                 nearbyRequests
             }
             .padding(.horizontal, 18)
@@ -99,6 +100,53 @@ struct ExploreView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("business-\(business.id.uuidString)")
+                }
+            }
+        }
+    }
+
+    private var townSpotsSection: some View {
+        VStack(spacing: 12) {
+            HStack {
+                SectionHeading(title: "Spots del Pueblo", subtitle: "Lugares foto y parches chill recomendados")
+                Spacer()
+                Button("Ver todos") {
+                    router.navigate(to: .townSpots)
+                }
+                .font(.subheadline.bold())
+                .foregroundStyle(AppTheme.coral)
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(store.townSpots) { spot in
+                        Button {
+                            router.navigate(to: .townSpots)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: spot.photoSymbol)
+                                        .foregroundStyle(.orange)
+                                    Spacer()
+                                    Label("\(spot.likesCount)", systemImage: "heart.fill")
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(.red)
+                                }
+                                Text(spot.name)
+                                    .font(.headline)
+                                    .foregroundStyle(AppTheme.ink)
+                                    .lineLimit(1)
+                                Text(spot.locationNote)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                            .padding(14)
+                            .frame(width: 210, alignment: .leading)
+                            .cardSurface()
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
         }
