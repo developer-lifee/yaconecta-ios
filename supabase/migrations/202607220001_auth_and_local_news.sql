@@ -224,7 +224,7 @@ on public.news_reports for insert to authenticated
 with check (reporter_id = auth.uid());
 
 insert into public.towns (id, name, region) values
-    ('10000000-0000-0000-0000-000000000001', 'Guaduas', 'Cundinamarca'),
-    ('10000000-0000-0000-0000-000000000002', 'Honda', 'Tolima'),
-    ('10000000-0000-0000-0000-000000000003', 'Jardín', 'Antioquia')
+    ('10000000-0000-0000-0000-000000000001', 'San Luis de Cubarral', 'Meta'),
+    ('10000000-0000-0000-0000-000000000002', 'El Dorado', 'Meta'),
+    ('10000000-0000-0000-0000-000000000003', 'Guamal', 'Meta')
 on conflict do nothing;

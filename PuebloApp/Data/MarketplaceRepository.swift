@@ -21,152 +21,144 @@ struct DemoMarketplaceRepository: MarketplaceRepository {
 }
 
 enum DemoData {
-    static let guaduas = Town(
+    static let cubarral = Town(
         id: UUID(uuidString: "10000000-0000-0000-0000-000000000001")!,
-        name: "Guaduas",
-        region: "Cundinamarca",
-        activeBusinesses: 38
+        name: "San Luis de Cubarral",
+        region: "Meta",
+        activeBusinesses: 45
     )
-    static let honda = Town(
+    static let elDorado = Town(
         id: UUID(uuidString: "10000000-0000-0000-0000-000000000002")!,
-        name: "Honda",
-        region: "Tolima",
-        activeBusinesses: 52
+        name: "El Dorado",
+        region: "Meta",
+        activeBusinesses: 32
     )
-    static let jardin = Town(
+    static let guamal = Town(
         id: UUID(uuidString: "10000000-0000-0000-0000-000000000003")!,
-        name: "Jardín",
-        region: "Antioquia",
-        activeBusinesses: 44
+        name: "Guamal",
+        region: "Meta",
+        activeBusinesses: 58
     )
 
     static let snapshot = MarketplaceSnapshot(
-        towns: [guaduas, honda, jardin],
+        towns: [cubarral, elDorado, guamal],
         businesses: [
             Business(
-                id: UUID(uuidString: "20000000-0000-0000-0000-000000000001")!, townID: guaduas.id,
-                name: "La Esquina de Omaira", category: .food,
-                summary: "Almuerzos caseros y corrientazos", etaMinutes: 25, deliveryPrice: 4_000,
-                rating: 4.9, reviewCount: 86, isOpen: true, symbol: "takeoutbag.and.cup.and.straw.fill", colorName: "coral",
+                id: UUID(uuidString: "20000000-0000-0000-0000-000000000001")!, townID: cubarral.id,
+                name: "Sazón Llanera Don Pedro", category: .food,
+                summary: "Almuerzos caseros, carne a la llanera y sancocho de gallina", etaMinutes: 25, deliveryPrice: 4_000,
+                rating: 4.9, reviewCount: 94, isOpen: true, symbol: "takeoutbag.and.cup.and.straw.fill", colorName: "coral",
                 products: [
-                    Product(id: UUID(), name: "Almuerzo del día", detail: "Sopa, principio, proteína y jugo", price: 18_000),
-                    Product(id: UUID(), name: "Bandeja campesina", detail: "Fríjol, arroz, carne molida y aguacate", price: 24_000)
+                    Product(id: UUID(), name: "Almuerzo del día", detail: "Sopa de plátano, principio, proteína y jugo", price: 18_000),
+                    Product(id: UUID(), name: "Plato de Mamona", detail: "Carne a la perra/llanera con yuca y plátano", price: 28_000)
                 ]
             ),
             Business(
-                id: UUID(uuidString: "20000000-0000-0000-0000-000000000002")!, townID: guaduas.id,
-                name: "Droguería La 13", category: .pharmacy,
-                summary: "Medicamentos y cuidado personal", etaMinutes: 18, deliveryPrice: 3_000,
-                rating: 4.8, reviewCount: 41, isOpen: true, symbol: "cross.case.fill", colorName: "moss",
+                id: UUID(uuidString: "20000000-0000-0000-0000-000000000002")!, townID: cubarral.id,
+                name: "Droguería El Ariari", category: .pharmacy,
+                summary: "Medicamentos, primeros auxilios y cuidado personal", etaMinutes: 15, deliveryPrice: 3_000,
+                rating: 4.8, reviewCount: 53, isOpen: true, symbol: "cross.case.fill", colorName: "moss",
                 products: [
-                    Product(id: UUID(), name: "Consulta por disponibilidad", detail: "Escríbenos el nombre del producto", price: 0)
+                    Product(id: UUID(), name: "Consulta por disponibilidad", detail: "Escríbenos el medicamento que buscas", price: 0)
                 ]
             ),
             Business(
-                id: UUID(uuidString: "20000000-0000-0000-0000-000000000003")!, townID: guaduas.id,
-                name: "Mercadito Don Rafa", category: .market,
-                summary: "Mercado, frutas y productos de aseo", etaMinutes: 32, deliveryPrice: 5_000,
-                rating: 4.7, reviewCount: 59, isOpen: true, symbol: "basket.fill", colorName: "sun",
+                id: UUID(uuidString: "20000000-0000-0000-0000-000000000003")!, townID: cubarral.id,
+                name: "Ferretería y Remate El Cubarral", category: .services,
+                summary: "Herramientas, cemento, tanques de agua y artículos para finca", etaMinutes: 30, deliveryPrice: 5_000,
+                rating: 4.9, reviewCount: 118, isOpen: true, symbol: "wrench.and.screwdriver.fill", colorName: "sun",
                 products: [
-                    Product(id: UUID(), name: "Canasta básica", detail: "Arroz, aceite, huevos, panela y leche", price: 48_000),
-                    Product(id: UUID(), name: "Frutas de la semana", detail: "Selección de frutas frescas", price: 28_000)
+                    Product(id: UUID(), name: "Tanque plástico 500L", detail: "Tanque azul reforzado con tapa para reserva", price: 240_000),
+                    Product(id: UUID(), name: "Bulto de cemento 50kg", detail: "Cemento gris estructurado para obra", price: 32_000)
                 ]
             ),
             Business(
-                id: UUID(uuidString: "20000000-0000-0000-0000-000000000004")!, townID: guaduas.id,
-                name: "Expresos El Mono", category: .transport,
-                summary: "Moto y carro, casco adicional incluido", etaMinutes: 12, deliveryPrice: 6_000,
-                rating: 4.9, reviewCount: 112, isOpen: true, symbol: "motorcycle.fill", colorName: "sky",
+                id: UUID(uuidString: "20000000-0000-0000-0000-000000000004")!, townID: cubarral.id,
+                name: "Expresos del Ariari", category: .transport,
+                summary: "Mototaxis y camperos a veredas y municipios vecinos", etaMinutes: 10, deliveryPrice: 6_000,
+                rating: 4.9, reviewCount: 140, isOpen: true, symbol: "motorcycle.fill", colorName: "sky",
                 products: [
-                    Product(id: UUID(), name: "Carrera urbana", detail: "Precio base dentro del casco urbano", price: 6_000),
-                    Product(id: UUID(), name: "Viaje a vereda", detail: "Acordamos el precio según el recorrido", price: 0)
+                    Product(id: UUID(), name: "Carrera urbana Cubarral", detail: "Desplazamiento dentro del casco urbano", price: 6_000),
+                    Product(id: UUID(), name: "Expreso Cubarral - El Dorado", detail: "Recorrido en moto o campero", price: 18_000)
                 ]
             ),
             Business(
-                id: UUID(), townID: honda.id, name: "Sazón del Puerto", category: .food,
-                summary: "Comida tradicional del Magdalena", etaMinutes: 28, deliveryPrice: 4_500,
-                rating: 4.8, reviewCount: 74, isOpen: true, symbol: "fish.fill", colorName: "sky", products: []
+                id: UUID(), townID: guamal.id, name: "Parador Turístico Guamal", category: .food,
+                summary: "Pan de arroz, masato y parrillada llanera", etaMinutes: 20, deliveryPrice: 4_500,
+                rating: 4.8, reviewCount: 82, isOpen: true, symbol: "leaf.fill", colorName: "sky", products: []
             )
         ],
         requests: [
             LocalRequest(
-                id: UUID(uuidString: "30000000-0000-0000-0000-000000000001")!, townID: guaduas.id,
-                author: "María P.", title: "Necesito mercado hasta la vereda", detail: "Recoger una compra en Don Rafa y llevarla a Cucharal.",
-                category: .errand, area: "Vereda Cucharal", createdAt: .now.addingTimeInterval(-720), budget: 18_000,
+                id: UUID(uuidString: "30000000-0000-0000-0000-000000000001")!, townID: cubarral.id,
+                author: "María P.", title: "Necesito mercado hasta la vereda Central", detail: "Recoger compra en la galería y llevar a la vereda Central.",
+                category: .errand, area: "Vereda Central", createdAt: .now.addingTimeInterval(-720), budget: 18_000,
                 offerCount: 3, status: .published, isMine: false
             ),
             LocalRequest(
-                id: UUID(uuidString: "30000000-0000-0000-0000-000000000002")!, townID: guaduas.id,
-                author: "Carlos R.", title: "Busco electricista para hoy", detail: "Un tomacorriente está haciendo corto. Casa en el centro.",
-                category: .service, area: "Centro", createdAt: .now.addingTimeInterval(-1_900), budget: nil,
+                id: UUID(uuidString: "30000000-0000-0000-0000-000000000002")!, townID: cubarral.id,
+                author: "Carlos R.", title: "Busco motobomba de agua usada o nueva", detail: "Para extracción en finca cerca al río Ariari. Escribir disponibilidad.",
+                category: .wanted, area: "Centro Cubarral", createdAt: .now.addingTimeInterval(-1_900), budget: nil,
                 offerCount: 2, status: .published, isMine: false
             ),
             LocalRequest(
-                id: UUID(uuidString: "30000000-0000-0000-0000-000000000003")!, townID: guaduas.id,
-                author: "Tú", title: "Expreso hacia la terminal", detail: "Una persona y una maleta pequeña para las 4:30 p. m.",
-                category: .transport, area: "Plaza principal", createdAt: .now.addingTimeInterval(-3_400), budget: 9_000,
+                id: UUID(uuidString: "30000000-0000-0000-0000-000000000003")!, townID: cubarral.id,
+                author: "Tú", title: "Expreso hacia Guamal", detail: "Salida para 2 personas con maletas medianas a las 4:00 p. m.",
+                category: .transport, area: "Plaza principal", createdAt: .now.addingTimeInterval(-3_400), budget: 25_000,
                 offerCount: 1, status: .agreed, isMine: true
             )
         ],
         activity: [
-            ActivityItem(id: UUID(), title: "Expreso hacia la terminal", subtitle: "Julián aceptó por $9.000", date: .now.addingTimeInterval(-600), symbol: "car.fill", status: .agreed),
-            ActivityItem(id: UUID(), title: "Almuerzo de La Esquina", subtitle: "Entregado por Mateo", date: .now.addingTimeInterval(-86_400), symbol: "checkmark.circle.fill", status: .completed)
+            ActivityItem(id: UUID(), title: "Expreso hacia Guamal", subtitle: "Don Marcos aceptó por $25.000", date: .now.addingTimeInterval(-600), symbol: "car.fill", status: .agreed),
+            ActivityItem(id: UUID(), title: "Mamona de Sazón Llanera", subtitle: "Entregada por Camilo", date: .now.addingTimeInterval(-86_400), symbol: "checkmark.circle.fill", status: .completed)
         ],
         news: [
             CommunityNews(
-                id: UUID(uuidString: "40000000-0000-0000-0000-000000000001")!, townID: guaduas.id,
-                author: "Defensa Civil Guaduas", title: "Paso restringido en la vía a Caparrapí",
-                body: "Un deslizamiento cubre medio carril en el sector Alto de la Mona. Hay paso controlado y se recomienda evitar la vía durante la lluvia.",
-                category: .roads, urgency: .urgent, location: "Alto de la Mona",
-                createdAt: .now.addingTimeInterval(-1_140), sourceNote: "Reporte de Defensa Civil",
-                verification: .verified, confirmationCount: 18, didConfirm: false
+                id: UUID(uuidString: "40000000-0000-0000-0000-000000000001")!, townID: cubarral.id,
+                author: "Defensa Civil Cubarral", title: "Estado del caudal en el río Ariari",
+                body: "Se reporta aumento preventivo en el nivel del río por lluvias en la cordillera. Se recomienda a pescadores y turistas mantener precaución en los balnearios.",
+                category: .emergency, urgency: .urgent, location: "Río Ariari y Balnearios",
+                createdAt: .now.addingTimeInterval(-1_140), sourceNote: "Reporte oficial Defensa Civil",
+                verification: .verified, confirmationCount: 24, didConfirm: false
             ),
             CommunityNews(
-                id: UUID(uuidString: "40000000-0000-0000-0000-000000000002")!, townID: guaduas.id,
-                author: "Laura M.", title: "Sin servicio de agua en El Carmelo",
-                body: "Vecinos reportan que el agua no llega desde esta mañana. La empresa aún no informa la hora estimada de regreso.",
-                category: .publicService, urgency: .important, location: "Barrio El Carmelo",
-                createdAt: .now.addingTimeInterval(-3_200), sourceNote: "Observado por residentes",
-                verification: .communityConfirmed, confirmationCount: 9, didConfirm: false
+                id: UUID(uuidString: "40000000-0000-0000-0000-000000000002")!, townID: cubarral.id,
+                author: "Laura M.", title: "Mantenimiento eléctrico en el centro de Cubarral",
+                body: "ElectroMeta realizará cortes programados mañana entre las 8:00 a. m. y 12:00 m. para adecuación de transformadores.",
+                category: .publicService, urgency: .important, location: "Casco Urbano",
+                createdAt: .now.addingTimeInterval(-3_200), sourceNote: "Aviso de la empresa de energía",
+                verification: .communityConfirmed, confirmationCount: 14, didConfirm: false
             ),
             CommunityNews(
-                id: UUID(uuidString: "40000000-0000-0000-0000-000000000003")!, townID: guaduas.id,
-                author: "Parroquia San Miguel", title: "Acompañamiento a la familia Rodríguez",
-                body: "La comunidad acompaña a la familia Rodríguez en este momento difícil. La velación se realizará esta tarde en la sala comunal.",
-                category: .mourning, urgency: .informative, location: "Sala comunal del centro",
-                createdAt: .now.addingTimeInterval(-8_400), sourceNote: "Información compartida por la familia",
-                verification: .verified, confirmationCount: 6, didConfirm: false
-            ),
-            CommunityNews(
-                id: UUID(), townID: honda.id, author: "Bomberos Honda",
-                title: "Árbol caído cerca del puente Navarro",
-                body: "La vía presenta paso reducido mientras el equipo retira un árbol caído. Conduzca con precaución.",
-                category: .roads, urgency: .urgent, location: "Acceso al puente Navarro",
-                createdAt: .now.addingTimeInterval(-600), sourceNote: "Bomberos voluntarios",
-                verification: .verified, confirmationCount: 12, didConfirm: false
+                id: UUID(), townID: elDorado.id, author: "Alcaldía El Dorado",
+                title: "Mercado campesino este fin de semana",
+                body: "Invitación a todos los productores del Ariari a exponer frutas, cacao y plátano en el parque principal.",
+                category: .community, urgency: .informative, location: "Parque principal El Dorado",
+                createdAt: .now.addingTimeInterval(-600), sourceNote: "Alcaldía municipal",
+                verification: .verified, confirmationCount: 19, didConfirm: false
             )
         ],
         spots: [
             TownSpot(
-                id: UUID(uuidString: "50000000-0000-0000-0000-000000000001")!, townID: guaduas.id,
-                author: "Felipe M.", name: "Mirador de la Piedra Capira",
-                description: "Una de las mejores vistas del valle del Magdalena. Ideal para ver el atardecer y tomar fotos panorámicas increibles.",
-                category: .photo, locationNote: "Camino a la vereda La Capira (20 min en expreso)",
-                photoSymbol: "mountain.2.fill", likesCount: 42, isLiked: false
+                id: UUID(uuidString: "50000000-0000-0000-0000-000000000001")!, townID: cubarral.id,
+                author: "Esteban A.", name: "Balneario y Río Ariari",
+                description: "Aguas cristalinas refrescantes al pie de la cordillera. El sitio perfecto para sancocho de olla y fotos al atardecer.",
+                category: .nature, locationNote: "A 5 minutos del casco urbano de Cubarral",
+                photoSymbol: "water.waves", likesCount: 68, isLiked: false
             ),
             TownSpot(
-                id: UUID(uuidString: "50000000-0000-0000-0000-000000000002")!, townID: guaduas.id,
-                author: "Andrea V.", name: "Patio Imperial del Café",
-                description: "Un rincón tranquilo con sombra de árboles centenarios. Sirven café de origen local y granizados deliciosos.",
-                category: .chill, locationNote: "Calle Real, 2 cuadras arriba de la plaza",
-                photoSymbol: "cup.and.saucer.fill", likesCount: 29, isLiked: false
+                id: UUID(uuidString: "50000000-0000-0000-0000-000000000002")!, townID: cubarral.id,
+                author: "Andrea V.", name: "Mirador del Ariari y Cordillera",
+                description: "Una panorámica impresionante donde se juntan los llanos orientales con la cordillera. Increíble para tomar fotos.",
+                category: .photo, locationNote: "Vía a la vereda la Libertad",
+                photoSymbol: "camera.fill", likesCount: 54, isLiked: false
             ),
             TownSpot(
-                id: UUID(uuidString: "50000000-0000-0000-0000-000000000003")!, townID: guaduas.id,
-                author: "Don Bernardo", name: "Puente Colonial de la Pola",
-                description: "Lugar lleno de historia patria. Excelente iluminación nocturna para fotos y caminata tranquila.",
-                category: .history, locationNote: "Borde del centro histórico",
-                photoSymbol: "building.columns.fill", likesCount: 37, isLiked: false
+                id: UUID(uuidString: "50000000-0000-0000-0000-000000000003")!, townID: cubarral.id,
+                author: "Don Gonzalo", name: "Parche del Pan de Arroz y Masato",
+                description: "Negocio tradicional de más de 30 años. El masato más frío y el verdadero pan de arroz llanero.",
+                category: .chill, locationNote: "Salida hacia Guamal",
+                photoSymbol: "cup.and.saucer.fill", likesCount: 47, isLiked: false
             )
         ]
     )

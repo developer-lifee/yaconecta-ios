@@ -19,7 +19,7 @@ struct ProfileView: View {
                             .background(AppTheme.coral, in: Circle())
                         VStack(alignment: .leading, spacing: 3) {
                             Text(user.displayName).font(.headline)
-                            Text(user.email ?? "Cuenta Apple")
+                            Text(user.email ?? "Cuenta verificada")
                                 .font(.subheadline).foregroundStyle(.secondary)
                             Text("Vecino de \(store.selectedTown?.name ?? "tu pueblo")")
                                 .font(.caption).foregroundStyle(AppTheme.moss)
@@ -27,18 +27,33 @@ struct ProfileView: View {
                     }
                     .padding(.vertical, 8)
                 } else {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Label("Participa con una cuenta", systemImage: "person.crop.circle.badge.plus")
-                            .font(.headline)
-                        Text("Inicia sesión para publicar noticias, solicitar servicios y construir reputación.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        Button("Continuar con Apple o Google") {
-                            router.sheet = .signIn
+                    VStack(alignment: .center, spacing: 14) {
+                        Image(systemName: "person.crop.circle.badge.plus")
+                            .font(.system(size: 48))
+                            .foregroundStyle(AppTheme.coral)
+
+                        VStack(spacing: 4) {
+                            Text("Sin sesión activa")
+                                .font(.headline)
+                            Text("Inicia sesión o crea tu cuenta con Correo, Apple o Google para publicar en la comunidad.")
+                                .font(.subheadline)
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(.secondary)
                         }
-                        .buttonStyle(.borderedProminent)
+
+                        Button {
+                            router.sheet = .signIn
+                        } label: {
+                            Text("Iniciar sesión / Registrarse")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(AppTheme.coral, in: RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding(.top, 4)
                     }
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 12)
                 }
             }
 
@@ -70,11 +85,26 @@ struct ProfileView: View {
                     }
                 }
 
-                Section("Confianza") {
-                    Label("Cuenta social verificada", systemImage: "checkmark.seal.fill")
+                Section("Confianza y Reputación") {
+                    Label("Cuenta verificada", systemImage: "checkmark.seal.fill")
                         .foregroundStyle(AppTheme.moss)
                     LabeledContent("Tratos completados", value: "0")
                     LabeledContent("Confirmaciones útiles", value: "0")
+                }
+            } else {
+                Section("Gestión Comercial") {
+                    Button {
+                        router.sheet = .signIn
+                    } label: {
+                        HStack {
+                            Label("Iniciar sesión para gestionar Mi Negocio", systemImage: "storefront")
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Image(systemName: "lock.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
             }
 
