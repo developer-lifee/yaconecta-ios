@@ -11,6 +11,7 @@ struct AddEditProductSheet: View {
     @State private var detail: String
     @State private var priceText: String
     @State private var imageURLText: String
+    @State private var selectedImageData: Data? = nil
 
     init(businessID: UUID, existingProduct: Product? = nil) {
         self.businessID = businessID
@@ -20,13 +21,6 @@ struct AddEditProductSheet: View {
         _priceText = State(initialValue: existingProduct != nil ? String(existingProduct!.price) : "")
         _imageURLText = State(initialValue: existingProduct?.imageURL ?? "")
     }
-
-    private let sampleImages = [
-        ("🍬 Dulces / Chocolates", "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=800"),
-        ("🍱 Alimentos", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"),
-        ("🥤 Bebidas", "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=800"),
-        ("🛠️ Herramientas", "https://images.unsplash.com/photo-1581147036324-c17ac41dfa6c?w=800")
-    ]
 
     var body: some View {
         NavigationStack {
@@ -44,44 +38,11 @@ struct AddEditProductSheet: View {
                 }
 
                 Section("Fotografía del Producto") {
-                    TextField("URL de foto o imagen de producto", text: $imageURLText)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Seleccionar imagen de muestra rápida:").font(.caption2.bold()).foregroundStyle(.secondary)
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack {
-                                ForEach(sampleImages, id: \.1) { label, urlStr in
-                                    Button(label) {
-                                        imageURLText = urlStr
-                                    }
-                                    .font(.caption)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(Color(.tertiarySystemGroupedBackground), in: Capsule())
-                                }
-                            }
-                        }
-                    }
-
-                    if let url = URL(string: imageURLText), !imageURLText.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Vista previa:").font(.caption.bold()).foregroundStyle(.secondary)
-                            AsyncImage(url: url) { phase in
-                                if let image = phase.image {
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(height: 140)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                } else {
-                                    ProgressView()
-                                        .frame(maxWidth: .infinity, minHeight: 80)
-                                }
-                            }
-                        }
-                    }
+                    MediaPickerView(
+                        title: "Selecciona una foto de la galería o toma una nueva foto con la cámara:",
+                        mediaURLString: $imageURLText,
+                        selectedImageData: $selectedImageData
+                    )
                 }
             }
             .navigationTitle(existingProduct == nil ? "Nuevo Producto" : "Editar Producto")

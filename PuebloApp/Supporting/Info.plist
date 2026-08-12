@@ -60,5 +60,10 @@
             </array>
         </dict>
     </array>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>YaConecta necesita acceso a tu galería para adjuntar evidencias fotográficas, fotos de productos y fotos de perfil.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>YaConecta necesita acceso a tu cámara para tomar fotografías de productos y evidencias del pueblo.</string>
 </dict>
 </plist>

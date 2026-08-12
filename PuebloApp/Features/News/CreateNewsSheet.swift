@@ -8,6 +8,7 @@ struct CreateNewsSheet: View {
     @State private var isPublishing = false
     @State private var errorMessage: String?
     @State private var imageUrlInput = ""
+    @State private var selectedImageData: Data? = nil
 
     var body: some View {
         NavigationStack {
@@ -44,48 +45,13 @@ struct CreateNewsSheet: View {
                 }
 
                 Section("Evidencia Fotográfica / Videográfica") {
-                    TextField("URL de foto o evidencia (opcional)", text: $imageUrlInput)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .onChange(of: imageUrlInput) { _, newValue in
-                            draft.imageURL = newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-                        }
-
-                    HStack(spacing: 12) {
-                        Button {
-                            // URL de muestra de evidencia para demostración rápida
-                            imageUrlInput = "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800"
-                        } label: {
-                            Label("Adjuntar foto de muestra", systemImage: "photo.badge.plus")
-                                .font(.caption.bold())
-                        }
-                        .buttonStyle(.bordered)
-
-                        if imageUrlInput.isEmpty == false {
-                            Button("Quitar", role: .destructive) {
-                                imageUrlInput = ""
-                            }
-                            .font(.caption)
-                        }
-                    }
-
-                    if let urlString = draft.imageURL, let url = URL(string: urlString) {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(height: 160)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                            case .failure:
-                                Label("No se pudo cargar la imagen", systemImage: "photo.badge.exclamationmark")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            default:
-                                ProgressView()
-                            }
-                        }
+                    MediaPickerView(
+                        title: "Adjunta fotos o videos de la evidencia desde tu cámara o galería del iPhone:",
+                        mediaURLString: $imageUrlInput,
+                        selectedImageData: $selectedImageData
+                    )
+                    .onChange(of: imageUrlInput) { _, newValue in
+                        draft.imageURL = newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : newValue.trimmingCharacters(in: .whitespacesAndNewlines)
                     }
                 }
 
