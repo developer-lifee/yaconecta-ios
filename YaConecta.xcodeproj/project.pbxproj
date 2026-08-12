@@ -38,6 +38,7 @@
 		A1000000000000000000001D /* AddEditProductSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001E /* AddEditProductSheet.swift */; };
 		A1000000000000000000001E /* BulkImportProductsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001F /* BulkImportProductsSheet.swift */; };
 		A1000000000000000000001F /* TownSpotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000020 /* TownSpotsView.swift */; };
+		A10000000000000000000021 /* CreateBusinessSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000021 /* CreateBusinessSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,7 @@
 		B1000000000000000000001E /* AddEditProductSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditProductSheet.swift; sourceTree = "<group>"; };
 		B1000000000000000000001F /* BulkImportProductsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkImportProductsSheet.swift; sourceTree = "<group>"; };
 		B10000000000000000000020 /* TownSpotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TownSpotsView.swift; sourceTree = "<group>"; };
+		B10000000000000000000021 /* CreateBusinessSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBusinessSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,6 +242,7 @@
 				B1000000000000000000001D /* MyBusinessView.swift */,
 				B1000000000000000000001E /* AddEditProductSheet.swift */,
 				B1000000000000000000001F /* BulkImportProductsSheet.swift */,
+				B10000000000000000000021 /* CreateBusinessSheet.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 				A1000000000000000000001D /* AddEditProductSheet.swift in Sources */,
 				A1000000000000000000001E /* BulkImportProductsSheet.swift in Sources */,
 				A1000000000000000000001F /* TownSpotsView.swift in Sources */,
+				A10000000000000000000021 /* CreateBusinessSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

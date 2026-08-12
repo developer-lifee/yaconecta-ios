@@ -39,7 +39,8 @@ final class MarketplaceStore {
             let matchesCategory = selectedCategory == nil || business.category == selectedCategory
             let matchesSearch = searchText.isEmpty ||
                 business.name.localizedCaseInsensitiveContains(searchText) ||
-                business.summary.localizedCaseInsensitiveContains(searchText)
+                business.summary.localizedCaseInsensitiveContains(searchText) ||
+                business.tags.contains { $0.localizedCaseInsensitiveContains(searchText) }
             return matchesTown && matchesCategory && matchesSearch
         }
     }
@@ -245,7 +246,45 @@ final class MarketplaceStore {
             id: b.id, townID: b.townID, name: b.name, category: b.category,
             summary: b.summary, etaMinutes: b.etaMinutes, deliveryPrice: b.deliveryPrice,
             rating: b.rating, reviewCount: b.reviewCount, isOpen: b.isOpen,
-            symbol: b.symbol, colorName: b.colorName, products: products
+            symbol: b.symbol, colorName: b.colorName, products: products,
+            tags: b.tags, whatsappNumber: b.whatsappNumber, instagramHandle: b.instagramHandle, ownerID: b.ownerID
+        )
+    }
+
+    func createBusiness(name: String, category: BusinessCategory, summary: String, tags: [String], whatsappNumber: String?, instagramHandle: String?, deliveryPrice: Int, etaMinutes: Int, ownerID: UUID?) -> Business? {
+        guard let townID = selectedTown?.id else { return nil }
+        let newBusiness = Business(
+            id: UUID(),
+            townID: townID,
+            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+            category: category,
+            summary: summary.trimmingCharacters(in: .whitespacesAndNewlines),
+            etaMinutes: etaMinutes,
+            deliveryPrice: deliveryPrice,
+            rating: 5.0,
+            reviewCount: 1,
+            isOpen: true,
+            symbol: category.symbol,
+            colorName: "coral",
+            products: [],
+            tags: tags,
+            whatsappNumber: whatsappNumber?.trimmingCharacters(in: .whitespacesAndNewlines),
+            instagramHandle: instagramHandle?.trimmingCharacters(in: .whitespacesAndNewlines),
+            ownerID: ownerID
+        )
+        businesses.insert(newBusiness, at: 0)
+        return newBusiness
+    }
+
+    func updateBusinessContact(businessID: UUID, whatsappNumber: String?, instagramHandle: String?, tags: [String]) {
+        guard let index = businesses.firstIndex(where: { $0.id == businessID }) else { return }
+        let b = businesses[index]
+        businesses[index] = Business(
+            id: b.id, townID: b.townID, name: b.name, category: b.category,
+            summary: b.summary, etaMinutes: b.etaMinutes, deliveryPrice: b.deliveryPrice,
+            rating: b.rating, reviewCount: b.reviewCount, isOpen: b.isOpen,
+            symbol: b.symbol, colorName: b.colorName, products: b.products,
+            tags: tags, whatsappNumber: whatsappNumber, instagramHandle: instagramHandle, ownerID: b.ownerID
         )
     }
 

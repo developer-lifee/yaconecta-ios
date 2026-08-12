@@ -9,6 +9,7 @@ struct AuthenticatedUser: Equatable, Sendable {
     let id: UUID
     let displayName: String
     let email: String?
+    var avatarURL: String? = nil
 }
 
 @MainActor

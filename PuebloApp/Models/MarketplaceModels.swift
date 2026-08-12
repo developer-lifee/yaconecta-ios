@@ -41,6 +41,10 @@ struct Business: Identifiable, Hashable, Sendable {
     let symbol: String
     let colorName: String
     let products: [Product]
+    var tags: [String] = []
+    var whatsappNumber: String? = nil
+    var instagramHandle: String? = nil
+    var ownerID: UUID? = nil
 }
 
 struct Product: Identifiable, Hashable, Sendable {
@@ -48,6 +52,7 @@ struct Product: Identifiable, Hashable, Sendable {
     let name: String
     let detail: String
     let price: Int
+    var imageURL: String? = nil
 }
 
 enum RequestCategory: String, CaseIterable, Identifiable, Hashable, Sendable {

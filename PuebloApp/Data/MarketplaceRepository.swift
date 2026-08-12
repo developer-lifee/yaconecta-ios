@@ -44,6 +44,20 @@ enum DemoData {
         towns: [cubarral, elDorado, guamal],
         businesses: [
             Business(
+                id: UUID(uuidString: "20000000-0000-0000-0000-000000000005")!, townID: cubarral.id,
+                name: "Dulcería La Granja", category: .food,
+                summary: "Dulces típicos, golosinas, chocolates, galletas y regalitos", etaMinutes: 15, deliveryPrice: 3_000,
+                rating: 4.9, reviewCount: 62, isOpen: true, symbol: "gift.fill", colorName: "coral",
+                products: [
+                    Product(id: UUID(), name: "Arequipe Llanero 250g", detail: "Arequipe de leche pura de vaca artesanal", price: 12_000),
+                    Product(id: UUID(), name: "Combo Dulces Tradicionales", detail: "Cocadas, panelitas y cortados de leche", price: 16_000),
+                    Product(id: UUID(), name: "Caja de Chocolates Surtidos", detail: "Para regalo de cumpleaños o aniversario", price: 25_000)
+                ],
+                tags: ["Dulcería", "Golosinas", "Postres", "Regalos"],
+                whatsappNumber: "573101234567",
+                instagramHandle: "@dulceria_cubarral"
+            ),
+            Business(
                 id: UUID(uuidString: "20000000-0000-0000-0000-000000000001")!, townID: cubarral.id,
                 name: "Sazón Llanera Don Pedro", category: .food,
                 summary: "Almuerzos caseros, carne a la llanera y sancocho de gallina", etaMinutes: 25, deliveryPrice: 4_000,
@@ -51,7 +65,10 @@ enum DemoData {
                 products: [
                     Product(id: UUID(), name: "Almuerzo del día", detail: "Sopa de plátano, principio, proteína y jugo", price: 18_000),
                     Product(id: UUID(), name: "Plato de Mamona", detail: "Carne a la perra/llanera con yuca y plátano", price: 28_000)
-                ]
+                ],
+                tags: ["Restaurante", "Almuerzos", "Mamona"],
+                whatsappNumber: "573129876543",
+                instagramHandle: "@sazon_donpedro"
             ),
             Business(
                 id: UUID(uuidString: "20000000-0000-0000-0000-000000000002")!, townID: cubarral.id,
@@ -60,7 +77,9 @@ enum DemoData {
                 rating: 4.8, reviewCount: 53, isOpen: true, symbol: "cross.case.fill", colorName: "moss",
                 products: [
                     Product(id: UUID(), name: "Consulta por disponibilidad", detail: "Escríbenos el medicamento que buscas", price: 0)
-                ]
+                ],
+                tags: ["Droguería", "Medicamentos", "Salud"],
+                whatsappNumber: "573204567890"
             ),
             Business(
                 id: UUID(uuidString: "20000000-0000-0000-0000-000000000003")!, townID: cubarral.id,
@@ -70,7 +89,9 @@ enum DemoData {
                 products: [
                     Product(id: UUID(), name: "Tanque plástico 500L", detail: "Tanque azul reforzado con tapa para reserva", price: 240_000),
                     Product(id: UUID(), name: "Bulto de cemento 50kg", detail: "Cemento gris estructurado para obra", price: 32_000)
-                ]
+                ],
+                tags: ["Ferretería", "Remate", "Herramientas", "Finca"],
+                whatsappNumber: "573156789012"
             ),
             Business(
                 id: UUID(uuidString: "20000000-0000-0000-0000-000000000004")!, townID: cubarral.id,
@@ -80,12 +101,16 @@ enum DemoData {
                 products: [
                     Product(id: UUID(), name: "Carrera urbana Cubarral", detail: "Desplazamiento dentro del casco urbano", price: 6_000),
                     Product(id: UUID(), name: "Expreso Cubarral - El Dorado", detail: "Recorrido en moto o campero", price: 18_000)
-                ]
+                ],
+                tags: ["Expresos", "Mototaxi", "Transporte"],
+                whatsappNumber: "573187654321"
             ),
             Business(
                 id: UUID(), townID: guamal.id, name: "Parador Turístico Guamal", category: .food,
                 summary: "Pan de arroz, masato y parrillada llanera", etaMinutes: 20, deliveryPrice: 4_500,
-                rating: 4.8, reviewCount: 82, isOpen: true, symbol: "leaf.fill", colorName: "sky", products: []
+                rating: 4.8, reviewCount: 82, isOpen: true, symbol: "leaf.fill", colorName: "sky", products: [],
+                tags: ["Pan de Arroz", "Parador", "Masato"],
+                whatsappNumber: "573111112233"
             )
         ],
         requests: [
