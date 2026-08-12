@@ -15,9 +15,9 @@ struct SupabaseNewsService {
         let rows: [NewsRow] = try await client
             .from("local_news")
             .select(
-                "id,town_id,title,body,category,urgency,location_text,source_note,verification,confirmation_count,created_at,profiles!local_news_author_id_fkey(display_name)"
+                "id,town_id,title,body,category,urgency,location_text,source_note,verification,confirmation_count,image_url,is_regional,created_at,profiles!local_news_author_id_fkey(display_name)"
             )
-            .eq("town_id", value: townID.uuidString)
+            .or("town_id.eq.\(townID.uuidString),is_regional.eq.true")
             .eq("moderation", value: "published")
             .order("created_at", ascending: false)
             .execute()
@@ -44,14 +44,16 @@ struct SupabaseNewsService {
             locationText: draft.location.trimmingCharacters(in: .whitespacesAndNewlines),
             sourceNote: draft.sourceNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ? nil
-                : draft.sourceNote.trimmingCharacters(in: .whitespacesAndNewlines)
+                : draft.sourceNote.trimmingCharacters(in: .whitespacesAndNewlines),
+            imageURL: draft.imageURL,
+            isRegional: draft.isRegional
         )
 
         let row: NewsRow = try await client
             .from("local_news")
             .insert(payload)
             .select(
-                "id,town_id,title,body,category,urgency,location_text,source_note,verification,confirmation_count,created_at,profiles!local_news_author_id_fkey(display_name)"
+                "id,town_id,title,body,category,urgency,location_text,source_note,verification,confirmation_count,image_url,is_regional,created_at,profiles!local_news_author_id_fkey(display_name)"
             )
             .single()
             .execute()
@@ -85,6 +87,8 @@ private struct NewNewsRow: Encodable, Sendable {
     let urgency: String
     let locationText: String
     let sourceNote: String?
+    let imageURL: String?
+    let isRegional: Bool
 
     enum CodingKeys: String, CodingKey {
         case townID = "town_id"
@@ -92,6 +96,8 @@ private struct NewNewsRow: Encodable, Sendable {
         case title, body, category, urgency
         case locationText = "location_text"
         case sourceNote = "source_note"
+        case imageURL = "image_url"
+        case isRegional = "is_regional"
     }
 }
 
@@ -124,6 +130,8 @@ private struct NewsRow: Decodable, Sendable {
     let sourceNote: String?
     let verification: String
     let confirmationCount: Int
+    let imageURL: String?
+    let isRegional: Bool?
     let createdAt: Date
     let profiles: NewsAuthorRow?
 
@@ -135,6 +143,8 @@ private struct NewsRow: Decodable, Sendable {
         case sourceNote = "source_note"
         case verification
         case confirmationCount = "confirmation_count"
+        case imageURL = "image_url"
+        case isRegional = "is_regional"
         case createdAt = "created_at"
         case profiles
     }
@@ -153,7 +163,9 @@ private struct NewsRow: Decodable, Sendable {
             sourceNote: sourceNote,
             verification: VerificationStatus(databaseValue: verification),
             confirmationCount: confirmationCount,
-            didConfirm: false
+            didConfirm: false,
+            imageURL: imageURL,
+            isRegional: isRegional ?? false
         )
     }
 }

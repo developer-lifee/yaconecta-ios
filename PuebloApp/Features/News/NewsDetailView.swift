@@ -17,6 +17,11 @@ struct NewsDetailView: View {
                                 .font(.subheadline.bold())
                                 .foregroundStyle(AppTheme.coral)
                             Spacer()
+                            if news.isRegional {
+                                Label("Alcance Regional", systemImage: "globe.americas.fill")
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.blue)
+                            }
                             Text(news.createdAt, style: .relative)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -24,10 +29,38 @@ struct NewsDetailView: View {
                         Text(news.title)
                             .font(.largeTitle.bold())
                             .foregroundStyle(AppTheme.ink)
+
                         VerificationBadge(status: news.verification, confirmations: news.confirmationCount)
+
+                        if let imageURLString = news.imageURL, let url = URL(string: imageURLString) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Evidencia fotográfica:")
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.secondary)
+                                AsyncImage(url: url) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                                            .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+                                    case .failure:
+                                        Label("No fue posible cargar la imagen de evidencia", systemImage: "photo.badge.exclamationmark")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    default:
+                                        ProgressView()
+                                            .frame(maxWidth: .infinity, minHeight: 120)
+                                    }
+                                }
+                            }
+                        }
+
                         Text(news.body)
                             .font(.body)
                             .lineSpacing(5)
+
                         Divider()
                         Label(news.location, systemImage: "mappin.and.ellipse")
                         Label("Publicado por \(news.author)", systemImage: "person.crop.circle")

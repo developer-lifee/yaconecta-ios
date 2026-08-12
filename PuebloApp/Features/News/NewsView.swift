@@ -81,6 +81,7 @@ struct NewsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Información con contexto")
                     .font(.headline)
+                    .foregroundStyle(AppTheme.ink)
                 Text("Diferenciamos reportes sin verificar, confirmaciones de vecinos y fuentes verificadas.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -119,7 +120,7 @@ private struct NewsCategoryChip: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 9)
                 .foregroundStyle(selected ? .white : AppTheme.ink)
-                .background(selected ? AppTheme.ink : .white, in: Capsule())
+                .background(selected ? AppTheme.ink : Color(.tertiarySystemGroupedBackground), in: Capsule())
         }
     }
 }
@@ -134,6 +135,14 @@ struct NewsCard: View {
                     .font(.caption.bold())
                     .foregroundStyle(categoryColor)
                 Spacer()
+                if news.isRegional {
+                    Label("REGIONAL", systemImage: "globe.americas.fill")
+                        .font(.caption2.bold())
+                        .foregroundStyle(.blue)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.blue.opacity(0.14), in: Capsule())
+                }
                 if news.urgency == .urgent {
                     Text("URGENTE")
                         .font(.caption2.bold())
@@ -147,6 +156,22 @@ struct NewsCard: View {
                 .font(.title3.bold())
                 .foregroundStyle(AppTheme.ink)
                 .multilineTextAlignment(.leading)
+
+            if let imageURLString = news.imageURL, let url = URL(string: imageURLString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxHeight: 180)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    default:
+                        EmptyView()
+                    }
+                }
+            }
+
             Text(news.body)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)

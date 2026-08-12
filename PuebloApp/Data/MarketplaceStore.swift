@@ -54,7 +54,7 @@ final class MarketplaceStore {
     var townNews: [CommunityNews] {
         guard let townID = selectedTown?.id else { return [] }
         return news
-            .filter { $0.townID == townID }
+            .filter { $0.townID == townID || $0.isRegional }
             .sorted {
                 if $0.urgency == .urgent, $1.urgency != .urgent { return true }
                 if $0.urgency != .urgent, $1.urgency == .urgent { return false }

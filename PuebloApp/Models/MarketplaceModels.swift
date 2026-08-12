@@ -162,6 +162,8 @@ struct CommunityNews: Identifiable, Hashable, Sendable {
     var verification: VerificationStatus
     var confirmationCount: Int
     var didConfirm: Bool
+    var imageURL: String? = nil
+    var isRegional: Bool = false
 }
 
 struct NewsDraft: Equatable, Sendable {
@@ -172,6 +174,8 @@ struct NewsDraft: Equatable, Sendable {
     var location = ""
     var sourceNote = ""
     var acceptsResponsibility = false
+    var imageURL: String? = nil
+    var isRegional = false
 
     var isValid: Bool {
         title.trimmingCharacters(in: .whitespacesAndNewlines).count >= 8 &&
