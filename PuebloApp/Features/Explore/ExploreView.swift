@@ -152,11 +152,14 @@ private struct BusinessCard: View {
 
     var body: some View {
         HStack(spacing: 15) {
-            Image(systemName: business.symbol)
-                .font(.system(size: 25, weight: .semibold))
-                .foregroundStyle(iconColor)
-                .frame(width: 64, height: 64)
-                .background(iconColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 18))
+            SmartImageView(
+                urlString: business.logoURL,
+                width: 64,
+                height: 64,
+                cornerRadius: 18,
+                fallbackSymbol: business.symbol,
+                fallbackColor: iconColor
+            )
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack {

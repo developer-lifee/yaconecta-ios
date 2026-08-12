@@ -45,6 +45,7 @@ struct Business: Identifiable, Hashable, Sendable {
     var whatsappNumber: String? = nil
     var instagramHandle: String? = nil
     var ownerID: UUID? = nil
+    var logoURL: String? = nil
 }
 
 struct Product: Identifiable, Hashable, Sendable {
@@ -95,6 +96,23 @@ struct LocalRequest: Identifiable, Hashable, Sendable {
     var offerCount: Int
     var status: RequestStatus
     let isMine: Bool
+}
+
+enum OfferStatus: String, Hashable, Sendable {
+    case pending = "Pendiente"
+    case accepted = "Aceptada"
+    case rejected = "Rechazada"
+}
+
+struct RequestOffer: Identifiable, Hashable, Sendable {
+    let id: UUID
+    let requestID: UUID
+    let offererName: String
+    let offererPhone: String?
+    let proposedPrice: Int
+    let note: String?
+    var status: OfferStatus
+    let createdAt: Date
 }
 
 struct RequestDraft: Equatable, Sendable {
@@ -153,6 +171,14 @@ enum VerificationStatus: String, Hashable, Sendable {
     case verified = "Verificada"
 }
 
+struct NewsEvidence: Identifiable, Hashable, Sendable {
+    let id: UUID
+    let author: String
+    let imageURL: String
+    let note: String?
+    let createdAt: Date
+}
+
 struct CommunityNews: Identifiable, Hashable, Sendable {
     let id: UUID
     let townID: UUID
@@ -169,6 +195,7 @@ struct CommunityNews: Identifiable, Hashable, Sendable {
     var didConfirm: Bool
     var imageURL: String? = nil
     var isRegional: Bool = false
+    var evidences: [NewsEvidence] = []
 }
 
 struct NewsDraft: Equatable, Sendable {

@@ -118,12 +118,13 @@ struct MediaPickerView: View {
         }
         .onChange(of: selectedItem) { _, newItem in
             Task {
-                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                if let data = try? await newItem?.loadTransferable(type: Data.self),
+                   let uiImage = UIImage(data: data) {
                     await MainActor.run {
                         selectedImageData = data
-                        selectedImage = UIImage(data: data)
-                        if let base64 = data.base64EncodedString().addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                            mediaURLString = "data:image/jpeg;base64,\(base64.prefix(200))..."
+                        selectedImage = uiImage
+                        if let base64String = compressAndEncodeImage(uiImage) {
+                            mediaURLString = base64String
                         }
                     }
                 }
@@ -139,11 +140,30 @@ struct MediaPickerView: View {
                 selectedImage = capturedImage
                 if let data = capturedImage.jpegData(compressionQuality: 0.8) {
                     selectedImageData = data
-                    mediaURLString = "captured_photo_\(Date().timeIntervalSince1970).jpg"
+                    if let base64String = compressAndEncodeImage(capturedImage) {
+                        mediaURLString = base64String
+                    }
                 }
             }
         }
     }
+}
+
+func compressAndEncodeImage(_ image: UIImage, maxDimension: CGFloat = 500) -> String? {
+    let size = image.size
+    guard size.width > 0, size.height > 0 else { return nil }
+    let ratio = min(maxDimension / size.width, maxDimension / size.height, 1.0)
+    let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
+
+    UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+    image.draw(in: CGRect(origin: .zero, size: newSize))
+    let resized = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    if let data = (resized ?? image).jpegData(compressionQuality: 0.7) {
+        return "data:image/jpeg;base64,\(data.base64EncodedString())"
+    }
+    return nil
 }
 
 struct CameraPickerView: UIViewControllerRepresentable {
@@ -185,36 +205,61 @@ struct CameraPickerView: UIViewControllerRepresentable {
     }
 }
 
+struct SmartImageView: View {
+    let urlString: String?
+    var width: CGFloat? = nil
+    var height: CGFloat
+    var cornerRadius: CGFloat = 14
+    var fallbackSymbol: String = "photo"
+    var fallbackColor: Color = AppTheme.coral
+
+    var body: some View {
+        Group {
+            if let urlString, !urlString.isEmpty {
+                if urlString.hasPrefix("data:image"),
+                   let commaPos = urlString.firstIndex(of: ","),
+                   let data = Data(base64Encoded: String(urlString[urlString.index(after: commaPos)...])),
+                   let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if let url = URL(string: urlString), urlString.hasPrefix("http") {
+                    AsyncImage(url: url) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } else {
+                            placeholderView
+                        }
+                    }
+                } else {
+                    placeholderView
+                }
+            } else {
+                placeholderView
+            }
+        }
+        .frame(width: width, height: height)
+        .frame(maxWidth: width == nil ? .infinity : nil)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+    }
+
+    private var placeholderView: some View {
+        Image(systemName: fallbackSymbol)
+            .font(.system(size: max(14, height * 0.38), weight: .semibold))
+            .foregroundStyle(fallbackColor)
+            .frame(width: width, height: height)
+            .frame(maxWidth: width == nil ? .infinity : nil)
+            .background(fallbackColor.opacity(0.12), in: RoundedRectangle(cornerRadius: cornerRadius))
+    }
+}
+
 struct MediaThumbnailView: View {
     let urlString: String
     let height: CGFloat
 
     var body: some View {
-        Group {
-            if urlString.hasPrefix("data:image"), let commaPos = urlString.firstIndex(of: ","), let data = Data(base64Encoded: String(urlString[urlString.index(after: commaPos)...])), let uiImage = UIImage(data: data) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(height: height)
-                    .frame(maxWidth: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-            } else if let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: height)
-                            .frame(maxWidth: .infinity)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    } else {
-                        Color.gray.opacity(0.12)
-                            .frame(height: height)
-                            .frame(maxWidth: .infinity)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-                }
-            }
-        }
+        SmartImageView(urlString: urlString, height: height)
     }
 }

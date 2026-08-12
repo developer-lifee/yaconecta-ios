@@ -19,6 +19,7 @@
 		A1000000000000000000000A /* BusinessDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* BusinessDetailView.swift */; };
 		A1000000000000000000000B /* RequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* RequestsView.swift */; };
 		A1000000000000000000000C /* CreateRequestSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000C /* CreateRequestSheet.swift */; };
+		A10000000000000000000077 /* MakeOfferSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000077 /* MakeOfferSheet.swift */; };
 		A1000000000000000000000D /* TownPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000D /* TownPickerSheet.swift */; };
 		A1000000000000000000000E /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000E /* ActivityView.swift */; };
 		A1000000000000000000000F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000F /* ProfileView.swift */; };
@@ -30,6 +31,7 @@
 		A10000000000000000000015 /* NewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000017 /* NewsView.swift */; };
 		A10000000000000000000016 /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000018 /* NewsDetailView.swift */; };
 		A10000000000000000000017 /* CreateNewsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* CreateNewsSheet.swift */; };
+		A10000000000000000000088 /* AddNewsEvidenceSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000088 /* AddNewsEvidenceSheet.swift */; };
 		A10000000000000000000018 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = N10000000000000000000001 /* Supabase */; };
 		A10000000000000000000019 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = N10000000000000000000002 /* GoogleSignIn */; };
 		A1000000000000000000001A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = N10000000000000000000003 /* GoogleSignInSwift */; };
@@ -39,6 +41,7 @@
 		A1000000000000000000001E /* BulkImportProductsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001F /* BulkImportProductsSheet.swift */; };
 		A1000000000000000000001F /* TownSpotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000020 /* TownSpotsView.swift */; };
 		A10000000000000000000021 /* CreateBusinessSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000021 /* CreateBusinessSheet.swift */; };
+		A10000000000000000000099 /* EditBusinessProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000099 /* EditBusinessProfileSheet.swift */; };
 		A10000000000000000000022 /* MediaPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000022 /* MediaPickerView.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +68,7 @@
 		B1000000000000000000000A /* BusinessDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessDetailView.swift; sourceTree = "<group>"; };
 		B1000000000000000000000B /* RequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsView.swift; sourceTree = "<group>"; };
 		B1000000000000000000000C /* CreateRequestSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRequestSheet.swift; sourceTree = "<group>"; };
+		B10000000000000000000077 /* MakeOfferSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeOfferSheet.swift; sourceTree = "<group>"; };
 		B1000000000000000000000D /* TownPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TownPickerSheet.swift; sourceTree = "<group>"; };
 		B1000000000000000000000E /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		B1000000000000000000000F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
@@ -78,6 +82,7 @@
 		B10000000000000000000017 /* NewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsView.swift; sourceTree = "<group>"; };
 		B10000000000000000000018 /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
 		B10000000000000000000019 /* CreateNewsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewsSheet.swift; sourceTree = "<group>"; };
+		B10000000000000000000088 /* AddNewsEvidenceSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewsEvidenceSheet.swift; sourceTree = "<group>"; };
 		B1000000000000000000001A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B1000000000000000000001B /* PuebloApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PuebloApp.entitlements; sourceTree = "<group>"; };
 		B1000000000000000000001C /* SupabaseNewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseNewsService.swift; sourceTree = "<group>"; };
@@ -86,6 +91,7 @@
 		B1000000000000000000001F /* BulkImportProductsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkImportProductsSheet.swift; sourceTree = "<group>"; };
 		B10000000000000000000020 /* TownSpotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TownSpotsView.swift; sourceTree = "<group>"; };
 		B10000000000000000000021 /* CreateBusinessSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBusinessSheet.swift; sourceTree = "<group>"; };
+		B10000000000000000000099 /* EditBusinessProfileSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBusinessProfileSheet.swift; sourceTree = "<group>"; };
 		B10000000000000000000022 /* MediaPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -218,6 +224,7 @@
 			children = (
 				B1000000000000000000000B /* RequestsView.swift */,
 				B1000000000000000000000C /* CreateRequestSheet.swift */,
+				B10000000000000000000077 /* MakeOfferSheet.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -246,6 +253,7 @@
 				B1000000000000000000001E /* AddEditProductSheet.swift */,
 				B1000000000000000000001F /* BulkImportProductsSheet.swift */,
 				B10000000000000000000021 /* CreateBusinessSheet.swift */,
+				B10000000000000000000099 /* EditBusinessProfileSheet.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -291,6 +299,7 @@
 				B10000000000000000000017 /* NewsView.swift */,
 				B10000000000000000000018 /* NewsDetailView.swift */,
 				B10000000000000000000019 /* CreateNewsSheet.swift */,
+				B10000000000000000000088 /* AddNewsEvidenceSheet.swift */,
 			);
 			path = News;
 			sourceTree = "<group>";
@@ -427,6 +436,7 @@
 				A1000000000000000000000A /* BusinessDetailView.swift in Sources */,
 				A1000000000000000000000B /* RequestsView.swift in Sources */,
 				A1000000000000000000000C /* CreateRequestSheet.swift in Sources */,
+				A10000000000000000000077 /* MakeOfferSheet.swift in Sources */,
 				A1000000000000000000000D /* TownPickerSheet.swift in Sources */,
 				A1000000000000000000000E /* ActivityView.swift in Sources */,
 				A1000000000000000000000F /* ProfileView.swift in Sources */,
@@ -436,12 +446,14 @@
 				A10000000000000000000015 /* NewsView.swift in Sources */,
 				A10000000000000000000016 /* NewsDetailView.swift in Sources */,
 				A10000000000000000000017 /* CreateNewsSheet.swift in Sources */,
+				A10000000000000000000088 /* AddNewsEvidenceSheet.swift in Sources */,
 				A1000000000000000000001B /* SupabaseNewsService.swift in Sources */,
 				A1000000000000000000001C /* MyBusinessView.swift in Sources */,
 				A1000000000000000000001D /* AddEditProductSheet.swift in Sources */,
 				A1000000000000000000001E /* BulkImportProductsSheet.swift in Sources */,
 				A1000000000000000000001F /* TownSpotsView.swift in Sources */,
 				A10000000000000000000021 /* CreateBusinessSheet.swift in Sources */,
+				A10000000000000000000099 /* EditBusinessProfileSheet.swift in Sources */,
 				A10000000000000000000022 /* MediaPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

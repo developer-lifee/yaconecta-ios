@@ -31,11 +31,14 @@ struct BusinessDetailView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image(systemName: business.symbol)
-                .font(.system(size: 42, weight: .bold))
-                .foregroundStyle(AppTheme.coral)
-                .frame(width: 90, height: 90)
-                .background(AppTheme.sand, in: RoundedRectangle(cornerRadius: 26))
+            SmartImageView(
+                urlString: business.logoURL,
+                width: 90,
+                height: 90,
+                cornerRadius: 26,
+                fallbackSymbol: business.symbol,
+                fallbackColor: AppTheme.coral
+            )
             Text(business.name)
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
@@ -132,21 +135,14 @@ struct BusinessDetailView: View {
             } else {
                 ForEach(business.products) { product in
                     HStack(spacing: 14) {
-                        if let urlString = product.imageURL, let url = URL(string: urlString) {
-                            AsyncImage(url: url) { phase in
-                                if let image = phase.image {
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 60, height: 60)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                } else {
-                                    Image(systemName: "photo")
-                                        .frame(width: 60, height: 60)
-                                        .background(Color.gray.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
-                                }
-                            }
-                        }
+                        SmartImageView(
+                            urlString: product.imageURL,
+                            width: 60,
+                            height: 60,
+                            cornerRadius: 12,
+                            fallbackSymbol: "cube.box.fill",
+                            fallbackColor: AppTheme.coral
+                        )
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(product.name).font(.headline)

@@ -6,21 +6,32 @@ struct BulkImportProductsSheet: View {
 
     let businessID: UUID
 
-    @State private var rawText = """
+    @State private var rawText = ""
+    @State private var parsedProducts: [Product] = []
+
+    private let sampleData = """
 Tanque plástico 500L, Tanque azul con tapa para reserva de agua, 240000
 Tanque 1000L, Tanque reforzado con multiconector, 450000
 Bomba de agua 0.5HP, Bomba periférica para uso doméstico, 120000
 Juego de destornilladores, 6 piezas de cromo vanadio aislados, 35000
 Cemento gris 50kg, Bulto de cemento estructurado, 32000
 """
-    @State private var parsedProducts: [Product] = []
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Carga Masiva desde Excel / CSV")
-                        .font(.headline)
+                    HStack {
+                        Text("Carga Masiva desde Excel / CSV")
+                            .font(.headline)
+                        Spacer()
+                        Button("Cargar ejemplo") {
+                            rawText = sampleData
+                            parseText()
+                        }
+                        .font(.caption.bold())
+                        .foregroundStyle(AppTheme.coral)
+                    }
                     Text("Copia y pega la lista de productos de tu negocio. Cada línea debe seguir el formato:")
                         .font(.caption)
                         .foregroundStyle(.secondary)

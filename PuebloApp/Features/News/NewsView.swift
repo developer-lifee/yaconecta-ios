@@ -66,7 +66,10 @@ struct NewsView: View {
         let service = SupabaseNewsService(client: auth.client)
         guard service.isConfigured else { return }
         do {
-            store.replaceNews(for: townID, with: try await service.fetchNews(townID: townID))
+            let fetched = try await service.fetchNews(townID: townID)
+            if !fetched.isEmpty {
+                store.replaceNews(for: townID, with: fetched)
+            }
             syncError = nil
         } catch {
             syncError = "Mostrando datos guardados; no fue posible actualizar el pueblo."

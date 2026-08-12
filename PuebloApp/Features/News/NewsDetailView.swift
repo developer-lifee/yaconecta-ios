@@ -6,6 +6,7 @@ struct NewsDetailView: View {
     let newsID: CommunityNews.ID
     @State private var showReportConfirmation = false
     @State private var confirmationError: String?
+    @State private var showAddEvidenceSheet = false
 
     var body: some View {
         Group {
@@ -34,7 +35,7 @@ struct NewsDetailView: View {
 
                         if let imageURLString = news.imageURL, !imageURLString.isEmpty {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Evidencia fotográfica:")
+                                Text("Foto Principal (Autor):")
                                     .font(.caption.bold())
                                     .foregroundStyle(.secondary)
                                 MediaThumbnailView(urlString: imageURLString, height: 220)
@@ -46,6 +47,64 @@ struct NewsDetailView: View {
                             .lineSpacing(5)
 
                         Divider()
+
+                        // Sección de Evidencias Aportadas por Vecinos
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Evidencias de Vecinos (\(news.evidences.count))")
+                                        .font(.headline)
+                                        .foregroundStyle(AppTheme.ink)
+                                    Text("Pruebas o fotos aportadas por la comunidad")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Button {
+                                    showAddEvidenceSheet = true
+                                } label: {
+                                    Label("Añadir Evidencia", systemImage: "camera.fill")
+                                        .font(.caption.bold())
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .foregroundStyle(.white)
+                                        .background(AppTheme.coral, in: Capsule())
+                                }
+                            }
+
+                            if news.evidences.isEmpty {
+                                Text("Aún no hay evidencias adicionales aportadas por vecinos. Si estás cerca, puedes aportar una foto o video como prueba.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .padding(12)
+                                    .background(Color(.tertiarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
+                            } else {
+                                ForEach(news.evidences) { item in
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        HStack {
+                                            Label(item.author, systemImage: "person.circle.fill")
+                                                .font(.caption.bold())
+                                                .foregroundStyle(AppTheme.ink)
+                                            Spacer()
+                                            Text(item.createdAt, style: .relative)
+                                                .font(.caption2)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        SmartImageView(urlString: item.imageURL, height: 180, cornerRadius: 12)
+                                        if let note = item.note, !note.isEmpty {
+                                            Text(note)
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+                                    .padding(12)
+                                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
+                                }
+                            }
+                        }
+
+                        Divider()
+
                         Label(news.location, systemImage: "mappin.and.ellipse")
                         Label("Publicado por \(news.author)", systemImage: "person.crop.circle")
                         if let source = news.sourceNote {
@@ -92,6 +151,9 @@ struct NewsDetailView: View {
                     Button("Entendido", role: .cancel) {}
                 } message: {
                     Text("Un moderador local revisará esta publicación.")
+                }
+                .sheet(isPresented: $showAddEvidenceSheet) {
+                    AddNewsEvidenceSheet(newsID: news.id)
                 }
             } else {
                 ContentUnavailableView("Noticia no disponible", systemImage: "newspaper")

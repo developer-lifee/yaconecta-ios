@@ -62,31 +62,136 @@ struct RequestsView: View {
 }
 
 struct RequestDetailView: View {
+    @Environment(MarketplaceStore.self) private var store
     let request: LocalRequest
-    @State private var showOfferSent = false
+
+    @State private var isPresentingMakeOffer = false
+
+    private var currentRequest: LocalRequest {
+        store.requests.first(where: { $0.id == request.id }) ?? request
+    }
+
+    private var offers: [RequestOffer] {
+        store.offersForRequest(request.id)
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
-                    Label(request.category.rawValue, systemImage: request.category.symbol)
+                    Label(currentRequest.category.rawValue, systemImage: currentRequest.category.symbol)
                         .font(.subheadline.bold())
                         .foregroundStyle(AppTheme.coral)
                     Spacer()
-                    StatusPill(status: request.status)
+                    StatusPill(status: currentRequest.status)
                 }
-                Text(request.title)
+                Text(currentRequest.title)
                     .font(.largeTitle.bold())
                     .foregroundStyle(AppTheme.ink)
-                Text(request.detail)
+                Text(currentRequest.detail)
                     .font(.body)
                 Divider()
-                Label(request.area, systemImage: "mappin.and.ellipse")
-                Label("Publicado por \(request.author)", systemImage: "person.crop.circle")
-                if let budget = request.budget {
-                    Label("Presupuesto: \(budget.colombianCurrency)", systemImage: "banknote")
+                Label(currentRequest.area, systemImage: "mappin.and.ellipse")
+                Label("Publicado por \(currentRequest.author)", systemImage: "person.crop.circle")
+                if let budget = currentRequest.budget {
+                    Label("Presupuesto base: \(budget.colombianCurrency)", systemImage: "banknote")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(AppTheme.moss)
                 }
-                Label("\(request.offerCount) propuestas recibidas", systemImage: "bubble.left.and.bubble.right")
+
+                Divider()
+
+                // Sección de Contraofertas estilo inDriver
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Propuestas & Contraofertas (\(offers.count))")
+                                .font(.headline)
+                                .foregroundStyle(AppTheme.ink)
+                            Text("Vecinos y comerciantes negociando el encargo")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        if !currentRequest.isMine {
+                            Button("Negociar Tarifa") {
+                                isPresentingMakeOffer = true
+                            }
+                            .font(.caption.bold())
+                            .buttonStyle(.borderedProminent)
+                            .tint(AppTheme.coral)
+                        }
+                    }
+
+                    if offers.isEmpty {
+                        Text("Aún no hay propuestas enviadas para este encargo. ¡Sé el primero en proponer tu tarifa!")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(14)
+                            .background(Color(.tertiarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
+                    } else {
+                        VStack(spacing: 10) {
+                            ForEach(offers) { offer in
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(offer.offererName)
+                                                .font(.subheadline.bold())
+                                            Text(offer.createdAt, style: .relative)
+                                                .font(.caption2)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        Spacer()
+                                        VStack(alignment: .trailing, spacing: 2) {
+                                            Text(offer.proposedPrice.colombianCurrency)
+                                                .font(.headline.bold())
+                                                .foregroundStyle(AppTheme.moss)
+                                            Text(offer.status.rawValue)
+                                                .font(.caption2.bold())
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(
+                                                    offer.status == .accepted ? Color.green.opacity(0.15) : Color.orange.opacity(0.15),
+                                                    in: Capsule()
+                                                )
+                                                .foregroundStyle(offer.status == .accepted ? .green : .orange)
+                                        }
+                                    }
+
+                                    if let note = offer.note, !note.isEmpty {
+                                        Text("“\(note)”")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                            .italic()
+                                    }
+
+                                    // Si es el dueño del encargo y la oferta está pendiente:
+                                    if currentRequest.isMine, offer.status == .pending {
+                                        HStack(spacing: 10) {
+                                            Button("Aceptar Propuesta (\(offer.proposedPrice.colombianCurrency))") {
+                                                store.acceptOffer(offerID: offer.id)
+                                            }
+                                            .font(.caption.bold())
+                                            .buttonStyle(.borderedProminent)
+                                            .tint(AppTheme.moss)
+
+                                            if let phone = offer.offererPhone, !phone.isEmpty {
+                                                Link(destination: URL(string: "https://wa.me/\(phone)?text=Hola%20\(offer.offererName),%20acepto%20tu%20propuesta%20de%20\(offer.proposedPrice.colombianCurrency)%20para%20\(currentRequest.title)")!) {
+                                                    Label("WhatsApp", systemImage: "message.fill")
+                                                        .font(.caption.bold())
+                                                        .foregroundStyle(.green)
+                                                }
+                                            }
+                                        }
+                                        .padding(.top, 4)
+                                    }
+                                }
+                                .padding(14)
+                                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
+                            }
+                        }
+                    }
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(22)
@@ -94,24 +199,24 @@ struct RequestDetailView: View {
             .padding(18)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Detalle")
+        .navigationTitle("Detalle del Encargo")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
-            if !request.isMine {
-                Button("Enviar una propuesta") {
-                    showOfferSent = true
+            if !currentRequest.isMine {
+                Button("Ofrecer / Negociar Tarifa") {
+                    isPresentingMakeOffer = true
                 }
+                .font(.headline)
                 .buttonStyle(.borderedProminent)
+                .tint(AppTheme.coral)
                 .controlSize(.large)
                 .frame(maxWidth: .infinity)
                 .padding(12)
                 .background(.bar)
             }
         }
-        .alert("Propuesta enviada", isPresented: $showOfferSent) {
-            Button("Listo", role: .cancel) {}
-        } message: {
-            Text("\(request.author) podrá verla y conversar contigo de forma privada.")
+        .sheet(isPresented: $isPresentingMakeOffer) {
+            MakeOfferSheet(request: currentRequest)
         }
     }
 }

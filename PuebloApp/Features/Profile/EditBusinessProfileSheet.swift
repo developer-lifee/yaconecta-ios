@@ -1,55 +1,94 @@
 import SwiftUI
 
-struct CreateBusinessSheet: View {
+struct EditBusinessProfileSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(MarketplaceStore.self) private var store
-    @Environment(AuthStore.self) private var auth
 
-    @State private var name = ""
-    @State private var category: BusinessCategory = .food
-    @State private var summary = ""
-    @State private var tagInput = ""
-    @State private var tags: [String] = ["Dulcería", "Golosinas"]
-    @State private var whatsappNumber = ""
-    @State private var instagramHandle = ""
-    @State private var deliveryPriceText = "3000"
-    @State private var etaMinutesText = "20"
-    @State private var logoURLText = ""
+    let business: Business
+
+    @State private var name: String
+    @State private var category: BusinessCategory
+    @State private var summary: String
+    @State private var logoURLText: String
     @State private var selectedImageData: Data? = nil
-
-    var onCreated: ((Business) -> Void)?
+    @State private var whatsappNumber: String
+    @State private var instagramHandle: String
+    @State private var deliveryPriceText: String
+    @State private var etaMinutesText: String
+    @State private var tagInput: String = ""
+    @State private var tags: [String]
 
     private let suggestedTags = ["Dulcería", "Golosinas", "Restaurante", "Remate", "Ferretería", "Panadería", "Heladería", "Miscelánea", "Peluquería", "Expresos", "Finca"]
+
+    init(business: Business) {
+        self.business = business
+        _name = State(initialValue: business.name)
+        _category = State(initialValue: business.category)
+        _summary = State(initialValue: business.summary)
+        _logoURLText = State(initialValue: business.logoURL ?? "")
+        _whatsappNumber = State(initialValue: business.whatsappNumber ?? "")
+        _instagramHandle = State(initialValue: business.instagramHandle ?? "")
+        _deliveryPriceText = State(initialValue: String(business.deliveryPrice))
+        _etaMinutesText = State(initialValue: String(business.etaMinutes))
+        _tags = State(initialValue: business.tags)
+    }
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Datos Principales") {
-                    TextField("Nombre del negocio (ej. Dulcería La Granja)", text: $name)
+                Section("Datos Básicos del Comercio") {
+                    TextField("Nombre del negocio", text: $name)
                     Picker("Categoría Base", selection: $category) {
                         ForEach(BusinessCategory.allCases) { cat in
                             Label(cat.rawValue, systemImage: cat.symbol).tag(cat)
                         }
                     }
-                    TextField("Descripción corta / Resumen de lo que vendes", text: $summary, axis: .vertical)
-                        .lineLimit(2...4)
+                    TextField("Resumen o descripción corta", text: $summary, axis: .vertical)
+                        .lineLimit(2...3)
                 }
 
-                Section("Logo o Foto de Perfil del Negocio") {
+                Section("Logo / Foto de Perfil") {
                     MediaPickerView(
-                        title: "Elige una foto de la galería o toma una foto para destacar tu negocio:",
+                        title: "Foto de perfil para destacar tu negocio en Explorar:",
                         mediaURLString: $logoURLText,
                         selectedImageData: $selectedImageData
                     )
                 }
 
-                Section("Etiquetas / Tags Personalizados") {
-                    Text("Agrega etiquetas para que los clientes te encuentren fácilmente al buscar (ej. Dulcería, Postres, Regalos):")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
+                Section("Atención & Redes Sociales") {
                     HStack {
-                        TextField("Nueva etiqueta", text: $tagInput)
+                        Image(systemName: "phone.fill").foregroundStyle(.green)
+                        TextField("WhatsApp (ej. 3101234567)", text: $whatsappNumber)
+                            .keyboardType(.phonePad)
+                    }
+                    HStack {
+                        Image(systemName: "camera.fill").foregroundStyle(.purple)
+                        TextField("Instagram (ej. @dulceria_cubarral)", text: $instagramHandle)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                    }
+                }
+
+                Section("Configuración de Domicilio") {
+                    HStack {
+                        Text("Costo domicilio ($):")
+                        Spacer()
+                        TextField("3000", text: $deliveryPriceText)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Tiempo estimado (min):")
+                        Spacer()
+                        TextField("20", text: $etaMinutesText)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                    }
+                }
+
+                Section("Etiquetas / Palabras Clave de Búsqueda") {
+                    HStack {
+                        TextField("Nueva etiqueta (ej. Postres)", text: $tagInput)
                         Button("Agregar") {
                             addTag()
                         }
@@ -98,67 +137,19 @@ struct CreateBusinessSheet: View {
                         }
                     }
                 }
-
-                Section("Atención al Cliente y WhatsApp") {
-                    HStack {
-                        Image(systemName: "phone.fill")
-                            .foregroundStyle(.green)
-                        TextField("Número WhatsApp (ej. 3101234567)", text: $whatsappNumber)
-                            .keyboardType(.phonePad)
-                    }
-                    HStack {
-                        Image(systemName: "camera.fill")
-                            .foregroundStyle(.purple)
-                        TextField("Instagram (ej. @dulceria_cubarral)", text: $instagramHandle)
-                            .autocorrectionDisabled()
-                            .textInputAutocapitalization(.never)
-                    }
-                }
-
-                Section("Servicio de Domicilio") {
-                    HStack {
-                        Text("Costo domicilio ($)")
-                        Spacer()
-                        TextField("Ej. 3000", text: $deliveryPriceText)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    HStack {
-                        Text("Tiempo est. (minutos)")
-                        Spacer()
-                        TextField("Ej. 20", text: $etaMinutesText)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                }
             }
-            .navigationTitle("Registrar Mi Negocio")
+            .navigationTitle("Configuración Comercial")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancelar") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Crear Negocio") {
-                        let deliveryPrice = Int(deliveryPriceText) ?? 3000
-                        let etaMinutes = Int(etaMinutesText) ?? 20
-                        let ownerID = auth.currentUser?.id
-                        if let created = store.createBusiness(
-                            name: name,
-                            category: category,
-                            summary: summary,
-                            tags: tags,
-                            whatsappNumber: whatsappNumber,
-                            instagramHandle: instagramHandle,
-                            deliveryPrice: deliveryPrice,
-                            etaMinutes: etaMinutes,
-                            ownerID: ownerID,
-                            logoURL: logoURLText
-                        ) {
-                            onCreated?(created)
-                        }
+                    Button("Guardar") {
+                        saveChanges()
                         dismiss()
                     }
+                    .font(.headline)
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
@@ -170,5 +161,15 @@ struct CreateBusinessSheet: View {
         guard !clean.isEmpty, !tags.contains(clean) else { return }
         tags.append(clean)
         tagInput = ""
+    }
+
+    private func saveChanges() {
+        store.updateBusinessContact(
+            businessID: business.id,
+            logoURL: logoURLText,
+            whatsappNumber: whatsappNumber.isEmpty ? nil : whatsappNumber,
+            instagramHandle: instagramHandle.isEmpty ? nil : instagramHandle,
+            tags: tags
+        )
     }
 }

@@ -20,6 +20,7 @@ final class MarketplaceStore {
     var activity: [ActivityItem] = []
     var news: [CommunityNews] = []
     var spots: [TownSpot] = []
+    var requestOffers: [RequestOffer] = []
     var selectedTownID: Town.ID?
     var selectedCategory: BusinessCategory?
     var searchText = ""
@@ -138,8 +139,73 @@ final class MarketplaceStore {
     }
 
     func replaceNews(for townID: Town.ID, with remoteNews: [CommunityNews]) {
-        news.removeAll { $0.townID == townID }
-        news.append(contentsOf: remoteNews)
+        guard !remoteNews.isEmpty else { return }
+        for item in remoteNews {
+            if let idx = news.firstIndex(where: { $0.id == item.id }) {
+                news[idx] = item
+            } else {
+                news.append(item)
+            }
+        }
+        news.sort { $0.createdAt > $1.createdAt }
+    }
+
+    func offersForRequest(_ requestID: UUID) -> [RequestOffer] {
+        requestOffers
+            .filter { $0.requestID == requestID }
+            .sorted { $0.createdAt > $1.createdAt }
+    }
+
+    func submitCounterOffer(requestID: UUID, offererName: String, offererPhone: String?, price: Int, note: String?) {
+        guard let index = requests.firstIndex(where: { $0.id == requestID }) else { return }
+        
+        let newOffer = RequestOffer(
+            id: UUID(),
+            requestID: requestID,
+            offererName: offererName,
+            offererPhone: offererPhone,
+            proposedPrice: price,
+            note: note,
+            status: .pending,
+            createdAt: Date()
+        )
+        
+        requestOffers.insert(newOffer, at: 0)
+        requests[index].offerCount += 1
+        
+        activity.insert(
+            ActivityItem(
+                id: UUID(),
+                title: "Contraoferta enviada",
+                subtitle: "\(requests[index].title) - \(price.colombianCurrency)",
+                date: Date(),
+                symbol: "banknote.fill",
+                status: .agreed
+            ),
+            at: 0
+        )
+    }
+
+    func acceptOffer(offerID: UUID) {
+        guard let offerIdx = requestOffers.firstIndex(where: { $0.id == offerID }) else { return }
+        requestOffers[offerIdx].status = .accepted
+        
+        let reqID = requestOffers[offerIdx].requestID
+        if let reqIdx = requests.firstIndex(where: { $0.id == reqID }) {
+            requests[reqIdx].status = .agreed
+            
+            activity.insert(
+                ActivityItem(
+                    id: UUID(),
+                    title: "Trato Acordado",
+                    subtitle: "\(requests[reqIdx].title) con \(requestOffers[offerIdx].offererName)",
+                    date: Date(),
+                    symbol: "hand.thumbsup.fill",
+                    status: .agreed
+                ),
+                at: 0
+            )
+        }
     }
 
     func upsertNews(_ item: CommunityNews) {
@@ -148,6 +214,26 @@ final class MarketplaceStore {
         } else {
             news.insert(item, at: 0)
         }
+    }
+
+    func addNewsEvidence(newsID: UUID, evidence: NewsEvidence) {
+        guard let index = news.firstIndex(where: { $0.id == newsID }) else { return }
+        news[index].evidences.insert(evidence, at: 0)
+        news[index].confirmationCount += 1
+        if news[index].verification == .unverified, news[index].confirmationCount >= 3 {
+            news[index].verification = .communityConfirmed
+        }
+        activity.insert(
+            ActivityItem(
+                id: UUID(),
+                title: "Evidencia Aportada",
+                subtitle: news[index].title,
+                date: Date(),
+                symbol: "camera.fill",
+                status: .published
+            ),
+            at: 0
+        )
     }
 
     func confirmNews(id: CommunityNews.ID) {
@@ -286,13 +372,16 @@ final class MarketplaceStore {
             summary: b.summary, etaMinutes: b.etaMinutes, deliveryPrice: b.deliveryPrice,
             rating: b.rating, reviewCount: b.reviewCount, isOpen: b.isOpen,
             symbol: b.symbol, colorName: b.colorName, products: products,
-            tags: b.tags, whatsappNumber: b.whatsappNumber, instagramHandle: b.instagramHandle, ownerID: b.ownerID
+            tags: b.tags, whatsappNumber: b.whatsappNumber, instagramHandle: b.instagramHandle, ownerID: b.ownerID, logoURL: b.logoURL
         )
     }
 
-    func createBusiness(name: String, category: BusinessCategory, summary: String, tags: [String], whatsappNumber: String?, instagramHandle: String?, deliveryPrice: Int, etaMinutes: Int, ownerID: UUID?) -> Business? {
+    func createBusiness(name: String, category: BusinessCategory, summary: String, tags: [String], whatsappNumber: String?, instagramHandle: String?, deliveryPrice: Int, etaMinutes: Int, ownerID: UUID?, logoURL: String? = nil) -> Business? {
         guard let townID = selectedTown?.id else { return nil }
         let id = UUID()
+        let cleanLogo = logoURL?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalLogo = (cleanLogo?.isEmpty ?? true) ? nil : cleanLogo
+
         let newBusiness = Business(
             id: id,
             townID: townID,
@@ -310,22 +399,26 @@ final class MarketplaceStore {
             tags: tags,
             whatsappNumber: whatsappNumber?.trimmingCharacters(in: .whitespacesAndNewlines),
             instagramHandle: instagramHandle?.trimmingCharacters(in: .whitespacesAndNewlines),
-            ownerID: ownerID
+            ownerID: ownerID,
+            logoURL: finalLogo
         )
         myBusinessID = id
         businesses.insert(newBusiness, at: 0)
         return newBusiness
     }
 
-    func updateBusinessContact(businessID: UUID, whatsappNumber: String?, instagramHandle: String?, tags: [String]) {
+    func updateBusinessContact(businessID: UUID, logoURL: String? = nil, whatsappNumber: String?, instagramHandle: String?, tags: [String]) {
         guard let index = businesses.firstIndex(where: { $0.id == businessID }) else { return }
         let b = businesses[index]
+        let cleanLogo = logoURL?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalLogo = (cleanLogo?.isEmpty ?? true) ? b.logoURL : cleanLogo
+
         businesses[index] = Business(
             id: b.id, townID: b.townID, name: b.name, category: b.category,
             summary: b.summary, etaMinutes: b.etaMinutes, deliveryPrice: b.deliveryPrice,
             rating: b.rating, reviewCount: b.reviewCount, isOpen: b.isOpen,
             symbol: b.symbol, colorName: b.colorName, products: b.products,
-            tags: tags, whatsappNumber: whatsappNumber, instagramHandle: instagramHandle, ownerID: b.ownerID
+            tags: tags, whatsappNumber: whatsappNumber, instagramHandle: instagramHandle, ownerID: b.ownerID, logoURL: finalLogo
         )
     }
 
