@@ -11,6 +11,7 @@ struct MediaPickerView: View {
     @State private var selectedImage: UIImage?
     @State private var isShowingUrlInput = false
     @State private var isShowingCamera = false
+    @State private var cameraUnavailableAlert = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -31,10 +32,15 @@ struct MediaPickerView: View {
                     .foregroundStyle(.white)
                     .background(AppTheme.coral, in: RoundedRectangle(cornerRadius: 12))
                 }
+                .buttonStyle(.plain)
 
                 // 2. Tomar foto desde la cámara
                 Button {
-                    isShowingCamera = true
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        isShowingCamera = true
+                    } else {
+                        cameraUnavailableAlert = true
+                    }
                 } label: {
                     HStack {
                         Image(systemName: "camera.fill")
@@ -46,6 +52,7 @@ struct MediaPickerView: View {
                     .foregroundStyle(AppTheme.ink)
                     .background(Color(.tertiarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
                 }
+                .buttonStyle(.plain)
             }
 
             HStack {
@@ -54,6 +61,7 @@ struct MediaPickerView: View {
                 }
                 .font(.caption.bold())
                 .foregroundStyle(.secondary)
+                .buttonStyle(.plain)
 
                 Spacer()
 
@@ -65,6 +73,7 @@ struct MediaPickerView: View {
                         mediaURLString = ""
                     }
                     .font(.caption.bold())
+                    .buttonStyle(.plain)
                 }
             }
 
@@ -113,13 +122,17 @@ struct MediaPickerView: View {
                     await MainActor.run {
                         selectedImageData = data
                         selectedImage = UIImage(data: data)
-                        // Generar identificador de evidencia o data URL si es necesario
                         if let base64 = data.base64EncodedString().addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                             mediaURLString = "data:image/jpeg;base64,\(base64.prefix(200))..."
                         }
                     }
                 }
             }
+        }
+        .alert("Cámara no disponible", isPresented: $cameraUnavailableAlert) {
+            Button("Entendido", role: .cancel) {}
+        } message: {
+            Text("La cámara no está disponible en este dispositivo. Por favor usa la opción Galería de Fotos.")
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPickerView { capturedImage in
@@ -139,11 +152,7 @@ struct CameraPickerView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            picker.sourceType = .camera
-        } else {
-            picker.sourceType = .photoLibrary
-        }
+        picker.sourceType = .camera
         picker.delegate = context.coordinator
         return picker
     }

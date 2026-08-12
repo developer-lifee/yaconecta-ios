@@ -183,10 +183,9 @@ struct NewsDraft: Equatable, Sendable {
     var isRegional = false
 
     var isValid: Bool {
-        title.trimmingCharacters(in: .whitespacesAndNewlines).count >= 8 &&
-        body.trimmingCharacters(in: .whitespacesAndNewlines).count >= 20 &&
-        location.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 &&
-        acceptsResponsibility
+        title.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 &&
+        body.trimmingCharacters(in: .whitespacesAndNewlines).count >= 6 &&
+        location.trimmingCharacters(in: .whitespacesAndNewlines).count >= 2
     }
 }
 

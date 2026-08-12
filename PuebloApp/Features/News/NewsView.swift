@@ -120,8 +120,14 @@ private struct NewsCategoryChip: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 9)
                 .foregroundStyle(selected ? .white : AppTheme.ink)
-                .background(selected ? AppTheme.ink : Color(.tertiarySystemGroupedBackground), in: Capsule())
+                .background(selected ? AppTheme.coral : Color(.secondarySystemGroupedBackground), in: Capsule())
+                .overlay {
+                    if !selected {
+                        Capsule().stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                    }
+                }
         }
+        .buttonStyle(.plain)
     }
 }
 

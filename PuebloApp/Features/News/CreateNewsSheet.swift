@@ -13,7 +13,7 @@ struct CreateNewsSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Información") {
+                Section("Información de la Noticia") {
                     TextField("Título claro y concreto", text: $draft.title)
                     Picker("Categoría", selection: $draft.category) {
                         ForEach(NewsCategory.allCases) { category in
@@ -26,8 +26,8 @@ struct CreateNewsSheet: View {
                         }
                     }
                     TextField("¿Qué ocurrió? Incluye hora y contexto", text: $draft.body, axis: .vertical)
-                        .lineLimit(5...9)
-                    TextField("Lugar exacto o sector", text: $draft.location)
+                        .lineLimit(4...8)
+                    TextField("Lugar exacto o sector (ej. Parque Principal, Vía Cubarral)", text: $draft.location)
                 }
 
                 Section("Alcance de la Noticia") {
@@ -55,9 +55,8 @@ struct CreateNewsSheet: View {
                     }
                 }
 
-                Section("Fuente") {
+                Section("Fuente (opcional)") {
                     TextField("Ej. Lo vi personalmente, Bomberos, Vecino del sector…", text: $draft.sourceNote)
-                    Toggle("Confirmo que comparto información de buena fe", isOn: $draft.acceptsResponsibility)
                 }
 
                 if draft.category == .mourning {
@@ -71,19 +70,10 @@ struct CreateNewsSheet: View {
                     }
                 }
 
-                Section {
-                    Label(
-                        "La publicación aparecerá como “Sin verificar” hasta recibir confirmaciones o revisión de un moderador.",
-                        systemImage: "checkmark.shield.fill"
-                    )
-                    .font(.footnote)
-                    .foregroundStyle(AppTheme.moss)
-                }
-
                 if let errorMessage {
                     Section {
                         Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
-                            .font(.footnote)
+                            .font(.footnote.bold())
                             .foregroundStyle(.red)
                     }
                 }
@@ -96,18 +86,55 @@ struct CreateNewsSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Publicar") {
-                        Task { await publish() }
+                        validateAndPublish()
                     }
                     .fontWeight(.bold)
-                    .disabled(!draft.isValid || !auth.isSignedIn || isPublishing)
+                    .disabled(isPublishing)
                     .accessibilityIdentifier("publish-news-button")
                 }
             }
         }
     }
 
+    private func validateAndPublish() {
+        errorMessage = nil
+        let titleClean = draft.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let bodyClean = draft.body.trimmingCharacters(in: .whitespacesAndNewlines)
+        let locationClean = draft.location.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if titleClean.isEmpty {
+            errorMessage = "Por favor ingresa un título para la noticia."
+            return
+        }
+        if titleClean.count < 3 {
+            errorMessage = "El título debe tener al menos 3 caracteres."
+            return
+        }
+        if bodyClean.isEmpty {
+            errorMessage = "Por favor escribe los detalles de lo que ocurrió."
+            return
+        }
+        if bodyClean.count < 6 {
+            errorMessage = "La descripción debe tener al menos 6 caracteres."
+            return
+        }
+        if locationClean.isEmpty {
+            errorMessage = "Por favor indica el lugar o sector de la noticia."
+            return
+        }
+
+        Task { await publish() }
+    }
+
     private func publish() async {
-        guard let townID = store.selectedTown?.id, let user = auth.currentUser else { return }
+        guard let townID = store.selectedTown?.id else {
+            errorMessage = "Por favor selecciona un pueblo primero."
+            return
+        }
+        guard let user = auth.currentUser else {
+            errorMessage = "Debes iniciar sesión para publicar noticias."
+            return
+        }
         isPublishing = true
         defer { isPublishing = false }
         do {
