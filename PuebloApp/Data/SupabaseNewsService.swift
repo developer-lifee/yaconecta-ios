@@ -92,7 +92,7 @@ struct SupabaseNewsService {
 
     func confirm(newsID: UUID, userID: UUID) async throws {
         guard let client else { return }
-        try? await client
+        _ = try? await client
             .from("news_confirmations")
             .upsert(NewsConfirmationRow(newsID: newsID, userID: userID))
             .execute()
