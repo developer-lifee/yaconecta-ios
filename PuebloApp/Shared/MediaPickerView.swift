@@ -184,3 +184,37 @@ struct CameraPickerView: UIViewControllerRepresentable {
         }
     }
 }
+
+struct MediaThumbnailView: View {
+    let urlString: String
+    let height: CGFloat
+
+    var body: some View {
+        Group {
+            if urlString.hasPrefix("data:image"), let commaPos = urlString.firstIndex(of: ","), let data = Data(base64Encoded: String(urlString[urlString.index(after: commaPos)...])), let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: height)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            } else if let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: height)
+                            .frame(maxWidth: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    } else {
+                        Color.gray.opacity(0.12)
+                            .frame(height: height)
+                            .frame(maxWidth: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+                }
+            }
+        }
+    }
+}

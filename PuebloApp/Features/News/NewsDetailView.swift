@@ -32,28 +32,12 @@ struct NewsDetailView: View {
 
                         VerificationBadge(status: news.verification, confirmations: news.confirmationCount)
 
-                        if let imageURLString = news.imageURL, let url = URL(string: imageURLString) {
+                        if let imageURLString = news.imageURL, !imageURLString.isEmpty {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Evidencia fotográfica:")
                                     .font(.caption.bold())
                                     .foregroundStyle(.secondary)
-                                AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                                            .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
-                                    case .failure:
-                                        Label("No fue posible cargar la imagen de evidencia", systemImage: "photo.badge.exclamationmark")
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    default:
-                                        ProgressView()
-                                            .frame(maxWidth: .infinity, minHeight: 120)
-                                    }
-                                }
+                                MediaThumbnailView(urlString: imageURLString, height: 220)
                             }
                         }
 
@@ -68,24 +52,29 @@ struct NewsDetailView: View {
                             Label(source, systemImage: "link")
                         }
                         Divider()
-                        Button {
-                            Task { await confirm(news: news) }
-                        } label: {
-                            Label(
-                                news.didConfirm ? "Ya confirmaste este reporte" : "Yo también puedo confirmar esto",
-                                systemImage: news.didConfirm ? "checkmark.circle.fill" : "person.badge.shield.checkmark.fill"
-                            )
-                            .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(news.didConfirm || !auth.isSignedIn)
 
-                        if !auth.isSignedIn {
-                            Text("Inicia sesión para confirmar reportes.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .center)
+                        // Solo mostrar botón de confirmación si no eres el autor de la noticia
+                        if isNotAuthor(news: news) {
+                            Button {
+                                Task { await confirm(news: news) }
+                            } label: {
+                                Label(
+                                    news.didConfirm ? "Ya confirmaste este reporte" : "Yo también puedo confirmar esto",
+                                    systemImage: news.didConfirm ? "checkmark.circle.fill" : "person.badge.shield.checkmark.fill"
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(news.didConfirm || !auth.isSignedIn)
+
+                            if !auth.isSignedIn {
+                                Text("Inicia sesión para confirmar reportes.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }
                         }
+
                         if let confirmationError {
                             Text(confirmationError)
                                 .font(.caption)
@@ -110,6 +99,11 @@ struct NewsDetailView: View {
         }
         .navigationTitle("Noticia")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func isNotAuthor(news: CommunityNews) -> Bool {
+        guard let currentUser = auth.currentUser else { return true }
+        return news.author != currentUser.displayName
     }
 
     private func confirm(news: CommunityNews) async {

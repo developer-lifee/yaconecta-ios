@@ -163,19 +163,8 @@ struct NewsCard: View {
                 .foregroundStyle(AppTheme.ink)
                 .multilineTextAlignment(.leading)
 
-            if let imageURLString = news.imageURL, let url = URL(string: imageURLString) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(maxHeight: 180)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    default:
-                        EmptyView()
-                    }
-                }
+            if let imageURLString = news.imageURL, !imageURLString.isEmpty {
+                MediaThumbnailView(urlString: imageURLString, height: 180)
             }
 
             Text(news.body)

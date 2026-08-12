@@ -259,8 +259,9 @@ final class MarketplaceStore {
 
     func createBusiness(name: String, category: BusinessCategory, summary: String, tags: [String], whatsappNumber: String?, instagramHandle: String?, deliveryPrice: Int, etaMinutes: Int, ownerID: UUID?) -> Business? {
         guard let townID = selectedTown?.id else { return nil }
+        let id = UUID()
         let newBusiness = Business(
-            id: UUID(),
+            id: id,
             townID: townID,
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             category: category,
@@ -278,6 +279,7 @@ final class MarketplaceStore {
             instagramHandle: instagramHandle?.trimmingCharacters(in: .whitespacesAndNewlines),
             ownerID: ownerID
         )
+        myBusinessID = id
         businesses.insert(newBusiness, at: 0)
         return newBusiness
     }
