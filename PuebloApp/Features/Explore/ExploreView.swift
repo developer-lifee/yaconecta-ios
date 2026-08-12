@@ -11,7 +11,6 @@ struct ExploreView: View {
                 categories
                 businessSection
                 townSpotsSection
-                nearbyRequests
             }
             .padding(.horizontal, 18)
             .padding(.top, 12)
@@ -119,20 +118,6 @@ struct ExploreView: View {
                         .buttonStyle(.plain)
                     }
                 }
-            }
-        }
-    }
-
-    private var nearbyRequests: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            SectionHeading(title: "La gente está buscando", subtitle: "Solicitudes recientes cerca de ti")
-            ForEach(store.townRequests.filter { !$0.isMine }.prefix(2)) { request in
-                Button {
-                    router.navigate(to: .request(request))
-                } label: {
-                    RequestRow(request: request)
-                }
-                .buttonStyle(.plain)
             }
         }
     }
