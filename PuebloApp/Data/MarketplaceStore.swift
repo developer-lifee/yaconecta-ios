@@ -157,6 +157,39 @@ final class MarketplaceStore {
         if news[index].verification == .unverified, news[index].confirmationCount >= 3 {
             news[index].verification = .communityConfirmed
         }
+
+        let activityItem = ActivityItem(
+            id: UUID(),
+            title: "Confirmación de Noticia Útil",
+            subtitle: news[index].title,
+            date: Date(),
+            symbol: "checkmark.seal.fill",
+            status: .completed
+        )
+        activity.insert(activityItem, at: 0)
+    }
+
+    // MARK: - Misiones del Pueblo y Nivel de Verificación
+    var completedDealsCount: Int {
+        activity.filter { $0.status == .completed }.count
+    }
+
+    var usefulConfirmationsCount: Int {
+        news.filter { $0.didConfirm }.count
+    }
+
+    var userSpotsCount: Int {
+        spots.filter { $0.isLiked || $0.author.contains("Esteban") }.count
+    }
+
+    var missionsCompletedCount: Int {
+        (completedDealsCount > 0 ? 1 : 0) +
+        (usefulConfirmationsCount > 0 ? 1 : 0) +
+        (userSpotsCount > 0 ? 1 : 0)
+    }
+
+    var isAccountVerified: Bool {
+        missionsCompletedCount >= 3
     }
 
     // MARK: - Gestor de Comercio y Estantería (Mi Negocio)
@@ -318,6 +351,16 @@ final class MarketplaceStore {
             isLiked: true
         )
         spots.insert(newSpot, at: 0)
+
+        let activityItem = ActivityItem(
+            id: UUID(),
+            title: "Spot Publicado en Pueblo",
+            subtitle: newSpot.name,
+            date: Date(),
+            symbol: "camera.fill",
+            status: .completed
+        )
+        activity.insert(activityItem, at: 0)
     }
 
     func addReviewToSpot(spotID: UUID, comment: String, rating: Int, photoURL: String?, author: String) {

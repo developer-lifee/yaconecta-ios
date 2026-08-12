@@ -19,8 +19,19 @@ struct ProfileView: View {
                             .background(AppTheme.coral, in: Circle())
                         VStack(alignment: .leading, spacing: 3) {
                             Text(user.displayName).font(.headline)
-                            Text(user.email ?? "Cuenta verificada")
-                                .font(.subheadline).foregroundStyle(.secondary)
+
+                            HStack(spacing: 4) {
+                                if store.isAccountVerified {
+                                    Label("Cuenta Verificada", systemImage: "checkmark.seal.fill")
+                                        .font(.caption.bold())
+                                        .foregroundStyle(.green)
+                                } else {
+                                    Label("Vecino en Progreso (\(store.missionsCompletedCount)/3)", systemImage: "clock.badge.checkmark")
+                                        .font(.caption.bold())
+                                        .foregroundStyle(.orange)
+                                }
+                            }
+
                             Text("Vecino de \(store.selectedTown?.name ?? "tu pueblo")")
                                 .font(.caption).foregroundStyle(AppTheme.moss)
                         }
@@ -58,6 +69,77 @@ struct ProfileView: View {
             }
 
             if auth.isSignedIn {
+                Section("Nivel de Verificación y Misiones de Pueblo") {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Text("Progreso para verificar cuenta:")
+                                .font(.subheadline.bold())
+                            Spacer()
+                            Text("\(store.missionsCompletedCount)/3 Misiones")
+                                .font(.caption.bold())
+                                .foregroundStyle(store.isAccountVerified ? .green : .orange)
+                        }
+
+                        ProgressView(value: Double(store.missionsCompletedCount), total: 3.0)
+                            .tint(store.isAccountVerified ? .green : AppTheme.coral)
+
+                        Text(store.isAccountVerified ? "¡Felicidades! Has completado las misiones comunitarias y tu cuenta es Verificada." : "Completa misiones interactuando en la app para verificar tu cuenta de vecino:")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+
+                    // Misión 1: Spots
+                    HStack {
+                        Image(systemName: store.userSpotsCount > 0 ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(store.userSpotsCount > 0 ? .green : .secondary)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("📍 Publicar o recomendar 1 Spot del pueblo").font(.subheadline.weight(.semibold))
+                            Text(store.userSpotsCount > 0 ? "¡Completado!" : "Publica un mirador o parche chill").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+
+                    // Misión 2: Noticias
+                    HStack {
+                        Image(systemName: store.usefulConfirmationsCount > 0 ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(store.usefulConfirmationsCount > 0 ? .green : .secondary)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("💬 Confirmar 1 noticia útil comunitaria").font(.subheadline.weight(.semibold))
+                            Text(store.usefulConfirmationsCount > 0 ? "¡Completado!" : "Apoya noticias de vecinos").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+
+                    // Misión 3: Comercio / Encargos
+                    HStack {
+                        Image(systemName: store.completedDealsCount > 0 ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(store.completedDealsCount > 0 ? .green : .secondary)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("🤝 Completar 1 trato o pedido").font(.subheadline.weight(.semibold))
+                            Text(store.completedDealsCount > 0 ? "¡Completado!" : "Compra o vende algo en tu pueblo").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
+                Section("Historial de Actividad y Reputación") {
+                    LabeledContent("Tratos completados", value: "\(store.completedDealsCount)")
+                    LabeledContent("Confirmaciones útiles", value: "\(store.usefulConfirmationsCount)")
+                    LabeledContent("Spots publicados", value: "\(store.userSpotsCount)")
+
+                    Button {
+                        router.navigate(to: .activityHistory)
+                    } label: {
+                        HStack {
+                            Label("Ver mi historial de actividad completo", systemImage: "clock.arrow.circlepath")
+                                .font(.subheadline.bold())
+                                .foregroundStyle(AppTheme.coral)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.bold())
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+
                 Section("Mis roles") {
                     Toggle(isOn: $sellerRole) {
                         Label("Vendo productos o servicios", systemImage: "storefront.fill")
@@ -83,13 +165,6 @@ struct ProfileView: View {
                             }
                         }
                     }
-                }
-
-                Section("Confianza y Reputación") {
-                    Label("Cuenta verificada", systemImage: "checkmark.seal.fill")
-                        .foregroundStyle(AppTheme.moss)
-                    LabeledContent("Tratos completados", value: "0")
-                    LabeledContent("Confirmaciones útiles", value: "0")
                 }
             } else {
                 Section("Gestión Comercial") {

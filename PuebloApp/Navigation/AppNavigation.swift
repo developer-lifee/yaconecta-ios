@@ -15,6 +15,7 @@ enum AppRoute: Hashable {
     case news(CommunityNews)
     case myBusiness
     case townSpots
+    case activityHistory
 }
 
 enum SheetDestination: Identifiable, Hashable {

@@ -65,6 +65,8 @@ private struct AppTabStack<Root: View>: View {
                         MyBusinessView()
                     case .townSpots:
                         TownSpotsView()
+                    case .activityHistory:
+                        ActivityView()
                     }
                 }
         }
