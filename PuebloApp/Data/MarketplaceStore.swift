@@ -296,8 +296,12 @@ final class MarketplaceStore {
         )
     }
 
-    func publishSpot(name: String, description: String, category: SpotCategory, locationNote: String, author: String) {
+    func publishSpot(name: String, description: String, category: SpotCategory, locationNote: String, photoURL: String?, author: String) {
         guard let townID = selectedTown?.id else { return }
+        let cleanURL = photoURL?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalPhotoURL = (cleanURL?.isEmpty ?? true) ? nil : cleanURL
+        let initialPhotos = finalPhotoURL != nil ? [finalPhotoURL!] : []
+
         let newSpot = TownSpot(
             id: UUID(),
             townID: townID,
@@ -307,10 +311,41 @@ final class MarketplaceStore {
             category: category,
             locationNote: locationNote.trimmingCharacters(in: .whitespacesAndNewlines),
             photoSymbol: category.symbol,
+            photoURL: finalPhotoURL,
+            photos: initialPhotos,
+            reviews: [],
             likesCount: 1,
             isLiked: true
         )
         spots.insert(newSpot, at: 0)
+    }
+
+    func addReviewToSpot(spotID: UUID, comment: String, rating: Int, photoURL: String?, author: String) {
+        guard let index = spots.firstIndex(where: { $0.id == spotID }) else { return }
+        let cleanURL = photoURL?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalURL = (cleanURL?.isEmpty ?? true) ? nil : cleanURL
+        let newReview = SpotReview(
+            id: UUID(),
+            author: author,
+            comment: comment.trimmingCharacters(in: .whitespacesAndNewlines),
+            rating: rating,
+            photoURL: finalURL,
+            createdAt: Date()
+        )
+        spots[index].reviews.insert(newReview, at: 0)
+        if let photo = finalURL, !spots[index].photos.contains(photo) {
+            spots[index].photos.append(photo)
+        }
+    }
+
+    func addPhotoToSpot(spotID: UUID, photoURL: String) {
+        guard let index = spots.firstIndex(where: { $0.id == spotID }) else { return }
+        let cleanURL = photoURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanURL.isEmpty, !spots[index].photos.contains(cleanURL) else { return }
+        spots[index].photos.append(cleanURL)
+        if spots[index].photoURL == nil {
+            spots[index].photoURL = cleanURL
+        }
     }
 
     func toggleSpotLike(id: UUID) {

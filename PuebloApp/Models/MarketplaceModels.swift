@@ -209,6 +209,15 @@ enum SpotCategory: String, CaseIterable, Identifiable, Hashable, Sendable {
     }
 }
 
+struct SpotReview: Identifiable, Hashable, Sendable {
+    let id: UUID
+    let author: String
+    let comment: String
+    let rating: Int
+    let photoURL: String?
+    let createdAt: Date
+}
+
 struct TownSpot: Identifiable, Hashable, Sendable {
     let id: UUID
     let townID: UUID
@@ -218,6 +227,9 @@ struct TownSpot: Identifiable, Hashable, Sendable {
     let category: SpotCategory
     let locationNote: String
     let photoSymbol: String
+    var photoURL: String? = nil
+    var photos: [String] = []
+    var reviews: [SpotReview] = []
     var likesCount: Int
     var isLiked: Bool
 }

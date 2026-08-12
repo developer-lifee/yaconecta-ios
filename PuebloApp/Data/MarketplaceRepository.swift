@@ -169,21 +169,38 @@ enum DemoData {
                 author: "Esteban A.", name: "Balneario y Río Ariari",
                 description: "Aguas cristalinas refrescantes al pie de la cordillera. El sitio perfecto para sancocho de olla y fotos al atardecer.",
                 category: .nature, locationNote: "A 5 minutos del casco urbano de Cubarral",
-                photoSymbol: "water.waves", likesCount: 68, isLiked: false
+                photoSymbol: "water.waves",
+                photoURL: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+                photos: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"],
+                reviews: [
+                    SpotReview(id: UUID(), author: "Camilo R.", comment: "El agua es súper limpia y fresca. Recomendado ir en la mañana.", rating: 5, photoURL: nil, createdAt: Date().addingTimeInterval(-86400)),
+                    SpotReview(id: UUID(), author: "Maria P.", comment: "Excelente lugar para venir en familia el fin de semana.", rating: 5, photoURL: nil, createdAt: Date().addingTimeInterval(-172800))
+                ],
+                likesCount: 68, isLiked: false
             ),
             TownSpot(
                 id: UUID(uuidString: "50000000-0000-0000-0000-000000000002")!, townID: cubarral.id,
                 author: "Andrea V.", name: "Mirador del Ariari y Cordillera",
                 description: "Una panorámica impresionante donde se juntan los llanos orientales con la cordillera. Increíble para tomar fotos.",
                 category: .photo, locationNote: "Vía a la vereda la Libertad",
-                photoSymbol: "camera.fill", likesCount: 54, isLiked: false
+                photoSymbol: "camera.fill",
+                photoURL: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
+                photos: ["https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"],
+                reviews: [
+                    SpotReview(id: UUID(), author: "Felipe T.", comment: "La mejor vista del llano y la cordillera. Para atardeceres es increíble.", rating: 5, photoURL: nil, createdAt: Date().addingTimeInterval(-43200))
+                ],
+                likesCount: 54, isLiked: false
             ),
             TownSpot(
                 id: UUID(uuidString: "50000000-0000-0000-0000-000000000003")!, townID: cubarral.id,
                 author: "Don Gonzalo", name: "Parche del Pan de Arroz y Masato",
                 description: "Negocio tradicional de más de 30 años. El masato más frío y el verdadero pan de arroz llanero.",
                 category: .chill, locationNote: "Salida hacia Guamal",
-                photoSymbol: "cup.and.saucer.fill", likesCount: 47, isLiked: false
+                photoSymbol: "cup.and.saucer.fill",
+                photoURL: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
+                photos: ["https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800"],
+                reviews: [],
+                likesCount: 47, isLiked: false
             )
         ]
     )

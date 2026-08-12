@@ -6,6 +6,7 @@ struct TownSpotsView: View {
 
     @State private var selectedCategory: SpotCategory?
     @State private var isPresentingCreateSheet = false
+    @State private var selectedSpotForReview: TownSpot? = nil
 
     var body: some View {
         ScrollView {
@@ -16,7 +17,9 @@ struct TownSpotsView: View {
 
                 LazyVStack(spacing: 16) {
                     ForEach(filteredSpots) { spot in
-                        SpotCard(spot: spot)
+                        SpotCard(spot: spot) {
+                            selectedSpotForReview = spot
+                        }
                     }
                 }
             }
@@ -36,6 +39,9 @@ struct TownSpotsView: View {
         }
         .sheet(isPresented: $isPresentingCreateSheet) {
             CreateSpotSheet()
+        }
+        .sheet(item: $selectedSpotForReview) { spot in
+            AddSpotReviewSheet(spotID: spot.id, spotName: spot.name)
         }
     }
 
@@ -99,14 +105,15 @@ struct TownSpotsView: View {
 private struct SpotCard: View {
     @Environment(MarketplaceStore.self) private var store
     let spot: TownSpot
+    let onAddReview: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
                 Image(systemName: spot.photoSymbol)
-                    .font(.system(size: 26))
+                    .font(.system(size: 24))
                     .foregroundStyle(.orange)
-                    .frame(width: 52, height: 52)
+                    .frame(width: 48, height: 48)
                     .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 14))
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -121,6 +128,10 @@ private struct SpotCard: View {
                     .foregroundStyle(.secondary)
                 }
                 Spacer()
+            }
+
+            if let photoURL = spot.photoURL, !photoURL.isEmpty {
+                MediaThumbnailView(urlString: photoURL, height: 170)
             }
 
             Text(spot.description)
@@ -146,9 +157,126 @@ private struct SpotCard: View {
                 }
                 .buttonStyle(.plain)
             }
+
+            Divider()
+
+            // Sección de Reseñas y Experiencias de Visitantes
+            if !spot.reviews.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Reseñas de visitantes (\(spot.reviews.count)):")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+
+                    ForEach(spot.reviews.prefix(2)) { review in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(review.author).font(.caption.bold())
+                                HStack(spacing: 2) {
+                                    ForEach(1...5, id: \.self) { star in
+                                        Image(systemName: star <= review.rating ? "star.fill" : "star")
+                                            .font(.caption2)
+                                            .foregroundStyle(.orange)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            Text(review.comment)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            if let photoURL = review.photoURL, !photoURL.isEmpty {
+                                MediaThumbnailView(urlString: photoURL, height: 100)
+                            }
+                        }
+                        .padding(10)
+                        .background(Color(.tertiarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+            }
+
+            Button {
+                onAddReview()
+            } label: {
+                Label("Yo estuve aquí / Agregar reseña o foto", systemImage: "camera.badge.ellipsis")
+                    .font(.caption.bold())
+                    .foregroundStyle(AppTheme.coral)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(AppTheme.coral.opacity(0.1), in: RoundedRectangle(cornerRadius: 10))
+            }
+            .buttonStyle(.plain)
         }
         .padding(16)
         .cardSurface()
+    }
+}
+
+struct AddSpotReviewSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(MarketplaceStore.self) private var store
+    @Environment(AuthStore.self) private var auth
+
+    let spotID: UUID
+    let spotName: String
+
+    @State private var comment = ""
+    @State private var rating = 5
+    @State private var mediaURLString = ""
+    @State private var selectedImageData: Data? = nil
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Mi Experiencia en \(spotName)") {
+                    HStack {
+                        Text("Calificación:")
+                        Spacer()
+                        HStack(spacing: 6) {
+                            ForEach(1...5, id: \.self) { star in
+                                Image(systemName: star <= rating ? "star.fill" : "star")
+                                    .font(.title3)
+                                    .foregroundStyle(.orange)
+                                    .onTapGesture {
+                                        rating = star
+                                    }
+                            }
+                        }
+                    }
+
+                    TextField("¿Cómo te pareció este rincón? (tips, recomendación)", text: $comment, axis: .vertical)
+                        .lineLimit(3...5)
+                }
+
+                Section("Fotografía de tu visita") {
+                    MediaPickerView(
+                        title: "Sube una foto tomada en el lugar usando la cámara o selecciónala de tu galería:",
+                        mediaURLString: $mediaURLString,
+                        selectedImageData: $selectedImageData
+                    )
+                }
+            }
+            .navigationTitle("Agregar Reseña")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancelar") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Guardar") {
+                        let authorName = auth.currentUser?.displayName ?? "Visitante"
+                        store.addReviewToSpot(
+                            spotID: spotID,
+                            comment: comment,
+                            rating: rating,
+                            photoURL: mediaURLString.isEmpty ? nil : mediaURLString,
+                            author: authorName
+                        )
+                        dismiss()
+                    }
+                    .disabled(comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
     }
 }
 
@@ -201,6 +329,7 @@ struct CreateSpotSheet: View {
                             description: description,
                             category: category,
                             locationNote: locationNote,
+                            photoURL: mediaURLString.isEmpty ? nil : mediaURLString,
                             author: authorName
                         )
                         dismiss()
