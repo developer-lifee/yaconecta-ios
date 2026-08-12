@@ -273,7 +273,10 @@ struct MyBusinessView: View {
     }
 
     private var currentBusiness: Business? {
-        store.businesses.first { $0.ownerID == auth.currentUser?.id } ?? store.businesses.first
+        if let user = auth.currentUser, let b = store.businesses.first(where: { $0.ownerID == user.id }) {
+            return b
+        }
+        return store.myBusiness
     }
 
     private func loadExistingProfile() {

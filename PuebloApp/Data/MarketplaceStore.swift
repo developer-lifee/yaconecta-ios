@@ -161,12 +161,14 @@ final class MarketplaceStore {
 
     // MARK: - Gestor de Comercio y Estantería (Mi Negocio)
 
-    var myBusiness: Business? {
-        get {
-            businesses.first { $0.name.contains("Mi Negocio") || $0.id == myBusinessID }
-        }
-    }
     private var myBusinessID: UUID?
+
+    var myBusiness: Business? {
+        if let id = myBusinessID {
+            return businesses.first { $0.id == id }
+        }
+        return nil
+    }
 
     func createOrUpdateMyBusiness(
         name: String,
@@ -205,17 +207,21 @@ final class MarketplaceStore {
         }
     }
 
-    func addProduct(to businessID: UUID, name: String, detail: String, price: Int) {
+    func addProduct(to businessID: UUID, product: Product) {
         guard let bIndex = businesses.firstIndex(where: { $0.id == businessID }) else { return }
+        var updatedProducts = businesses[bIndex].products
+        updatedProducts.append(product)
+        businesses[bIndex] = rebuildBusiness(businesses[bIndex], products: updatedProducts)
+    }
+
+    func addProduct(to businessID: UUID, name: String, detail: String, price: Int) {
         let newProduct = Product(
             id: UUID(),
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             detail: detail.trimmingCharacters(in: .whitespacesAndNewlines),
             price: price
         )
-        var updatedProducts = businesses[bIndex].products
-        updatedProducts.append(newProduct)
-        businesses[bIndex] = rebuildBusiness(businesses[bIndex], products: updatedProducts)
+        addProduct(to: businessID, product: newProduct)
     }
 
     func updateProduct(in businessID: UUID, product: Product) {

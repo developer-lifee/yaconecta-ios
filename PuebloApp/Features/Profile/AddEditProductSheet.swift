@@ -21,6 +21,13 @@ struct AddEditProductSheet: View {
         _imageURLText = State(initialValue: existingProduct?.imageURL ?? "")
     }
 
+    private let sampleImages = [
+        ("🍬 Dulces / Chocolates", "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=800"),
+        ("🍱 Alimentos", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"),
+        ("🥤 Bebidas", "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=800"),
+        ("🛠️ Herramientas", "https://images.unsplash.com/photo-1581147036324-c17ac41dfa6c?w=800")
+    ]
+
     var body: some View {
         NavigationStack {
             Form {
@@ -37,36 +44,54 @@ struct AddEditProductSheet: View {
                 }
 
                 Section("Fotografía del Producto") {
-                    TextField("URL de la foto (opcional)", text: $imageURLText)
+                    TextField("URL de foto o imagen de producto", text: $imageURLText)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
 
-                    Button {
-                        imageURLText = "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=800"
-                    } label: {
-                        Label("Adjuntar foto de muestra", systemImage: "photo.badge.plus")
-                            .font(.caption.bold())
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Seleccionar imagen de muestra rápida:").font(.caption2.bold()).foregroundStyle(.secondary)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(sampleImages, id: \.1) { label, urlStr in
+                                    Button(label) {
+                                        imageURLText = urlStr
+                                    }
+                                    .font(.caption)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color(.tertiarySystemGroupedBackground), in: Capsule())
+                                }
+                            }
+                        }
                     }
-                    .buttonStyle(.bordered)
 
                     if let url = URL(string: imageURLText), !imageURLText.isEmpty {
-                        AsyncImage(url: url) { phase in
-                            if let image = phase.image {
-                                image.resizable().aspectRatio(contentMode: .fill)
-                                    .frame(height: 140).clipShape(RoundedRectangle(cornerRadius: 12))
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Vista previa:").font(.caption.bold()).foregroundStyle(.secondary)
+                            AsyncImage(url: url) { phase in
+                                if let image = phase.image {
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(height: 140)
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                } else {
+                                    ProgressView()
+                                        .frame(maxWidth: .infinity, minHeight: 80)
+                                }
                             }
                         }
                     }
                 }
             }
-            .navigationTitle(existingProduct == nil ? "Agregar Producto" : "Editar Producto")
+            .navigationTitle(existingProduct == nil ? "Nuevo Producto" : "Editar Producto")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancelar") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Guardar") {
+                    Button("Guardar Producto") {
                         saveProduct()
                         dismiss()
                     }
@@ -81,7 +106,7 @@ struct AddEditProductSheet: View {
         let cleanImage = imageURLText.trimmingCharacters(in: .whitespacesAndNewlines)
         let imageURL = cleanImage.isEmpty ? nil : cleanImage
 
-        let updated = Product(
+        let product = Product(
             id: existingProduct?.id ?? UUID(),
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             detail: detail.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -90,11 +115,9 @@ struct AddEditProductSheet: View {
         )
 
         if existingProduct != nil {
-            store.updateProduct(in: businessID, product: updated)
+            store.updateProduct(in: businessID, product: product)
         } else {
-            store.updateProduct(in: businessID, product: updated)
-            // also ensure added to products list if new
-            store.bulkImportProducts(to: businessID, products: [updated])
+            store.addProduct(to: businessID, product: product)
         }
     }
 }
