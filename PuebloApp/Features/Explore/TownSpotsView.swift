@@ -69,7 +69,7 @@ struct TownSpotsView: View {
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .foregroundStyle(selectedCategory == nil ? .white : AppTheme.ink)
-                        .background(selectedCategory == nil ? AppTheme.ink : .white, in: Capsule())
+                        .background(selectedCategory == nil ? AppTheme.coral : Color(.secondarySystemGroupedBackground), in: Capsule())
                 }
 
                 ForEach(SpotCategory.allCases) { cat in
@@ -81,7 +81,7 @@ struct TownSpotsView: View {
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                             .foregroundStyle(selectedCategory == cat ? .white : AppTheme.ink)
-                            .background(selectedCategory == cat ? AppTheme.ink : .white, in: Capsule())
+                            .background(selectedCategory == cat ? AppTheme.coral : Color(.secondarySystemGroupedBackground), in: Capsule())
                     }
                 }
             }
@@ -161,6 +161,8 @@ struct CreateSpotSheet: View {
     @State private var description = ""
     @State private var category: SpotCategory = .photo
     @State private var locationNote = ""
+    @State private var mediaURLString = ""
+    @State private var selectedImageData: Data? = nil
 
     var body: some View {
         NavigationStack {
@@ -175,6 +177,14 @@ struct CreateSpotSheet: View {
                     TextField("Ubicación o referencia (ej. A 10 min de la plaza)", text: $locationNote)
                     TextField("¿Por qué es especial este lugar? (detalles, recomendaciones)", text: $description, axis: .vertical)
                         .lineLimit(3...6)
+                }
+
+                Section("Fotografía / Video del Spot") {
+                    MediaPickerView(
+                        title: "Adjunta la foto o video del lugar usando la cámara o seleccionando desde tu galería:",
+                        mediaURLString: $mediaURLString,
+                        selectedImageData: $selectedImageData
+                    )
                 }
             }
             .navigationTitle("Publicar Spot Secretito")
