@@ -38,9 +38,7 @@
     <string>sb_publishable_Pe68qHk_sC0TvXwscRHJcA_hcNibvNL</string>
 
     <key>GIDClientID</key>
-    <string>YOUR_IOS_CLIENT_ID.apps.googleusercontent.com</string>
-    <key>GIDServerClientID</key>
-    <string>YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+    <string>580463231952-rmdakv7sh3k71g8b2vk1hg4iae6besih.apps.googleusercontent.com</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -48,7 +46,7 @@
             <string>Editor</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>com.googleusercontent.apps.YOUR_REVERSED_CLIENT_ID</string>
+                <string>com.googleusercontent.apps.580463231952-rmdakv7sh3k71g8b2vk1hg4iae6besih</string>
             </array>
         </dict>
         <dict>
