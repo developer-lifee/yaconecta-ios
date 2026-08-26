@@ -69,7 +69,7 @@ struct SignInSheet: View {
 
                     Spacer(minLength: 20)
 
-                    Text("Al continuar aceptas las normas comunitarias y el tratamiento de datos de YaConecta.")
+                    Text("Al continuar aceptas las normas comunitarias y el tratamiento de datos de PueblApp.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)

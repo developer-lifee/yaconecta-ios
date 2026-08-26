@@ -94,7 +94,7 @@ private struct LaunchLoadingView: View {
                 Image(systemName: "point.3.connected.trianglepath.dotted")
                     .font(.system(size: 48, weight: .bold))
                     .foregroundStyle(AppTheme.coral)
-                Text("YaConecta")
+                Text("PueblApp")
                     .font(.largeTitle.bold())
                     .foregroundStyle(AppTheme.ink)
                 ProgressView()

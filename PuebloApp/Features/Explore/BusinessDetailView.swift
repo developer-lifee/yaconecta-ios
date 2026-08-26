@@ -195,7 +195,7 @@ struct BusinessDetailView: View {
 
     private func openWhatsApp(number: String) {
         let cleanNumber = number.filter(\.isNumber)
-        let message = "Hola \(business.name)! Te escribo desde la app YaConecta Cubarral. Me gustaría pedir información o hacer una compra."
+        let message = "Hola \(business.name)! Te escribo desde la app PueblApp. Me gustaría pedir información o hacer una compra."
         let encodedMessage = message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let whatsappURLString = "https://wa.me/\(cleanNumber)?text=\(encodedMessage)"
         if let url = URL(string: whatsappURLString) {

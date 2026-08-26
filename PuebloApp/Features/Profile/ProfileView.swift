@@ -6,6 +6,7 @@ struct ProfileView: View {
     @Environment(AppRouter.self) private var router
     @State private var sellerRole = true
     @State private var courierRole = false
+    @State private var showDeleteAccountConfirmation = false
 
     var body: some View {
         List {
@@ -195,14 +196,53 @@ struct ProfileView: View {
             }
 
             if auth.isSignedIn {
-                Section {
-                    Button("Cerrar sesión", role: .destructive) {
+                Section("Cuenta") {
+                    Button("Cerrar sesión") {
                         Task { await auth.signOut() }
                     }
+                    .disabled(auth.isWorking)
+
+                    Button(role: .destructive) {
+                        showDeleteAccountConfirmation = true
+                    } label: {
+                        HStack {
+                            Label("Eliminar cuenta", systemImage: "trash")
+                                .foregroundStyle(.red)
+                            Spacer()
+                            if auth.isWorking {
+                                ProgressView()
+                            }
+                        }
+                    }
+                    .disabled(auth.isWorking)
                 }
             }
         }
         .navigationTitle("Perfil")
+        .confirmationDialog(
+            "¿Eliminar cuenta permanentemente?",
+            isPresented: $showDeleteAccountConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Eliminar mi cuenta definitivamente", role: .destructive) {
+                Task {
+                    await auth.deleteAccount()
+                }
+            }
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Esta acción es irreversible. Se eliminarán permanentemente tu perfil, publicaciones, productos, negocios y todos los datos asociados a tu cuenta de PueblApp.")
+        }
+        .alert("Aviso", isPresented: Binding(
+            get: { auth.errorMessage != nil },
+            set: { if !$0 { auth.errorMessage = nil } }
+        )) {
+            Button("Aceptar", role: .cancel) {
+                auth.errorMessage = nil
+            }
+        } message: {
+            Text(auth.errorMessage ?? "")
+        }
     }
 
     private func initials(for name: String) -> String {

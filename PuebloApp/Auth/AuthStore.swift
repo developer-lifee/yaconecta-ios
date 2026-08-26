@@ -218,6 +218,21 @@ final class AuthStore {
         }
     }
 
+    func deleteAccount() async {
+        guard let client else { return }
+        isWorking = true
+        errorMessage = nil
+        defer { isWorking = false }
+        do {
+            try await client.rpc("delete_user_account").execute()
+            try? await client.auth.signOut()
+            GIDSignIn.sharedInstance.signOut()
+            state = .signedOut
+        } catch {
+            errorMessage = "No se pudo eliminar la cuenta: \(error.localizedDescription)"
+        }
+    }
+
     private static func user(from user: User, fallbackName: String = "") -> AuthenticatedUser {
         let metadataName = user.userMetadata["full_name"]?.stringValue
         let emailName = user.email?.split(separator: "@").first.map(String.init) ?? "Vecino"

@@ -21,3 +21,6 @@ supabase/.temp/
 # Secrets — never commit
 .env
 *.env
+
+# Android (managed in separate repository)
+android/

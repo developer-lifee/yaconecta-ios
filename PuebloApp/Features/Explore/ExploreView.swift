@@ -17,7 +17,7 @@ struct ExploreView: View {
             .padding(.bottom, 28)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("YaConecta")
+        .navigationTitle("PueblApp")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) { TownButton() }
