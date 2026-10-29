@@ -265,7 +265,7 @@ final class MarketplaceStore {
     }
 
     var userSpotsCount: Int {
-        spots.filter { $0.isLiked || $0.author.contains("Esteban") }.count
+        spots.filter { $0.isLiked }.count
     }
 
     var missionsCompletedCount: Int {
@@ -276,6 +276,27 @@ final class MarketplaceStore {
 
     var isAccountVerified: Bool {
         missionsCompletedCount >= 3
+    }
+
+    func resetUserData() {
+        myBusinessID = nil
+        activity.removeAll()
+        requestOffers.removeAll()
+        for i in news.indices {
+            news[i].didConfirm = false
+        }
+        for i in spots.indices {
+            if spots[i].isLiked {
+                spots[i].isLiked = false
+                spots[i].likesCount = max(0, spots[i].likesCount - 1)
+            }
+        }
+        requests.removeAll { $0.isMine }
+        if let firstTown = towns.first {
+            selectedTownID = firstTown.id
+        }
+        selectedCategory = nil
+        searchText = ""
     }
 
     // MARK: - Gestor de Comercio y Estantería (Mi Negocio)

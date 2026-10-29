@@ -198,7 +198,10 @@ struct ProfileView: View {
             if auth.isSignedIn {
                 Section("Cuenta") {
                     Button("Cerrar sesión") {
-                        Task { await auth.signOut() }
+                        Task {
+                            await auth.signOut()
+                            store.resetUserData()
+                        }
                     }
                     .disabled(auth.isWorking)
 
@@ -227,6 +230,7 @@ struct ProfileView: View {
             Button("Eliminar mi cuenta definitivamente", role: .destructive) {
                 Task {
                     await auth.deleteAccount()
+                    store.resetUserData()
                 }
             }
             Button("Cancelar", role: .cancel) {}

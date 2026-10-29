@@ -128,15 +128,12 @@ enum DemoData {
             ),
             LocalRequest(
                 id: UUID(uuidString: "30000000-0000-0000-0000-000000000003")!, townID: cubarral.id,
-                author: "Tú", title: "Expreso hacia Guamal", detail: "Salida para 2 personas con maletas medianas a las 4:00 p. m.",
+                author: "Jorge L.", title: "Expreso hacia Guamal", detail: "Salida para 2 personas con maletas medianas a las 4:00 p. m.",
                 category: .transport, area: "Plaza principal", createdAt: .now.addingTimeInterval(-3_400), budget: 25_000,
-                offerCount: 1, status: .agreed, isMine: true
+                offerCount: 1, status: .published, isMine: false
             )
         ],
-        activity: [
-            ActivityItem(id: UUID(), title: "Expreso hacia Guamal", subtitle: "Don Marcos aceptó por $25.000", date: .now.addingTimeInterval(-600), symbol: "car.fill", status: .agreed),
-            ActivityItem(id: UUID(), title: "Mamona de Sazón Llanera", subtitle: "Entregada por Camilo", date: .now.addingTimeInterval(-86_400), symbol: "checkmark.circle.fill", status: .completed)
-        ],
+        activity: [],
         news: [
             CommunityNews(
                 id: UUID(uuidString: "40000000-0000-0000-0000-000000000001")!, townID: cubarral.id,
@@ -166,7 +163,7 @@ enum DemoData {
         spots: [
             TownSpot(
                 id: UUID(uuidString: "50000000-0000-0000-0000-000000000001")!, townID: cubarral.id,
-                author: "Esteban A.", name: "Balneario y Río Ariari",
+                author: "Alfonso G.", name: "Balneario y Río Ariari",
                 description: "Aguas cristalinas refrescantes al pie de la cordillera. El sitio perfecto para sancocho de olla y fotos al atardecer.",
                 category: .nature, locationNote: "A 5 minutos del casco urbano de Cubarral",
                 photoSymbol: "water.waves",
